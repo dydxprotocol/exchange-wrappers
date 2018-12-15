@@ -1,0 +1,84 @@
+version: 2
+jobs:
+  checkout_and_install:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - dependency-cache-v1-{{ .Branch }}-
+            - dependency-cache-v1-
+      - run:
+          name: Install Dependencies
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc && npm ci
+      - save_cache:
+          key: dependency-cache-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - "$HOME/.npm"
+      - save_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/build
+  lint:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Lint
+          command: npm run lint
+  build:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Build Contracts
+          command: npm run build
+      - run:
+          name: Build Typescript
+          command: npm run build
+      - save_cache:
+          key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/build
+  publish:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
+      - add_ssh_keys:
+          fingerprints:
+            - "94:6a:1c:a9:10:70:65:45:5f:a9:1c:8b:ec:fa:ca:ec"
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/build/.npmrc
+      - run:
+          command: sh scripts/publish_if_not_exists.sh
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout_and_install
+      - lint:
+          requires:
+            - checkout_and_install
+      - build:
+          requires:
+            - checkout_and_install
+      - publish:
+          requires:
+            - build
+            - lint
+          filters:
+            branches:
+              only: master
