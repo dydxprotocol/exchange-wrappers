@@ -1,0 +1,52 @@
+{
+  "name": "@dydxprotocol/exchange-wrappers",
+  "version": "0.0.1",
+  "description": "Collection of exchange wrapper contracts used by the dYdX Protocol",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'No Tests'",
+    "build": "npm run compile && npm run build:wrappers",
+    "compile": "truffle compile",
+    "build:wrappers": "typechain --target=web3-1.0.0 --outDir=build/wrappers/ './build/contracts/*.json'",
+    "migrate": "truffle migrate",
+    "develop": "truffle develop",
+    "console": "truffle console",
+    "lint": "npm run lint:ts && npm run lint:dydx",
+    "lint:ts": "tslint --project . -t verbose 'src/**/*.ts'",
+    "lint:sol": "solium -d contracts/",
+    "lint:dydx": "python util/lintcontracts.py",
+    "build:js": "rm -rf dist/ && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dydxprotocol/exchange-wrappers.git"
+  },
+  "keywords": [
+    "ethereum",
+    "dYdX",
+    "dex",
+    "0x",
+    "OasisDEX"
+  ],
+  "author": "dYdX Trading Inc.",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/dydxprotocol/exchange-wrappers/issues"
+  },
+  "homepage": "https://github.com/dydxprotocol/exchange-wrappers#readme",
+  "devDependencies": {
+    "solium": "^1.1.8",
+    "truffle": "^5.0.0-beta.2",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-no-focused-test": "^0.5.0",
+    "typechain": "^0.3.9",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@types/bn.js": "^4.11.3",
+    "bignumber.js": "^4.1.0",
+    "bn.js": "^4.11.8",
+    "web3-utils": "^1.0.0-beta.37"
+  }
+}
