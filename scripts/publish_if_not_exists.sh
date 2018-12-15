@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION=$(cat package.json | jq -r '.version')
-NAME=@dydxprotocol/dydx.js
+NAME=$(cat package.json | jq -r '.name')
 
 test -z "$(npm info $NAME@$VERSION)"
 if [ $? -eq 0 ]
