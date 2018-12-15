@@ -1,6 +1,3 @@
-require("babel-register");
-require('babel-polyfill');
-
 let mocha = {
   useColors: true
 };

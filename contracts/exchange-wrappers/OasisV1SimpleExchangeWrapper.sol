@@ -18,13 +18,13 @@
 
 pragma solidity 0.5.1;
 
-import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import { ISimpleMarketV1 } from "../external/Maker/OasisV1/ISimpleMarketV1.sol";
+import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import { ExchangeReader } from "../interfaces/ExchangeReader.sol";
+import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
 import { AdvancedTokenInteract } from "../lib/AdvancedTokenInteract.sol";
 import { MathHelpers } from "../lib/MathHelpers.sol";
 import { TokenInteract } from "../lib/TokenInteract.sol";
-import { ExchangeReader } from "../interfaces/ExchangeReader.sol";
-import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
 
 
 /**

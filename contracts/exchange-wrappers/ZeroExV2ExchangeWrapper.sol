@@ -19,14 +19,14 @@
 pragma solidity 0.5.1;
 pragma experimental ABIEncoderV2;
 
-import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import { IExchange } from "../external/0x/v2/interfaces/IExchange.sol";
 import { LibFillResults } from "../external/0x/v2/libs/LibFillResults.sol";
 import { LibOrder } from "../external/0x/v2/libs/LibOrder.sol";
-import { MathHelpers } from "../lib/MathHelpers.sol";
-import { TokenInteract } from "../lib/TokenInteract.sol";
+import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import { ExchangeReader } from "../interfaces/ExchangeReader.sol";
 import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
+import { MathHelpers } from "../lib/MathHelpers.sol";
+import { TokenInteract } from "../lib/TokenInteract.sol";
 
 
 /**
