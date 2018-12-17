@@ -17,3 +17,9 @@
 */
 
 export { OrderMapper } from './OrderMapper';
+export {
+  ZeroExV2Order,
+  Order,
+  OrderType,
+  OasisV1Order,
+} from './types';

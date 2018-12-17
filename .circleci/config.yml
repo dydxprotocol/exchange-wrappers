@@ -44,7 +44,7 @@ jobs:
           command: npm run build
       - run:
           name: Build Typescript
-          command: npm run build
+          command: npm run build:js
       - save_cache:
           key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
           paths:
