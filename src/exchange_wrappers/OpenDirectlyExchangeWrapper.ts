@@ -1,3 +1,4 @@
+import { OpenDirectlyOrder } from '../types';
 import { OpenDirectlyExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
 export  class OpenDirectlyExchangeWrapper {
@@ -19,7 +20,7 @@ export  class OpenDirectlyExchangeWrapper {
     return Contract[this.networkId.toString()].address;
   }
 
-  public orderToBytes(): number[] {
+  public orderToBytes(order: OpenDirectlyOrder): number[] {
     return [];
   }
 }

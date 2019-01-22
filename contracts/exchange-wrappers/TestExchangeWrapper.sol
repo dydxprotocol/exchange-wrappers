@@ -36,7 +36,7 @@ contract TestExchangeWrapper is
     // ============ Constants ============
 
     // arbitrary address to send the tokens to (they are burned)
-    address constant EXCHANGE_ADDRESS = address(0x1);
+    address public constant EXCHANGE_ADDRESS = address(0x1);
 
     // ============ Structs ============
 
@@ -113,38 +113,28 @@ contract TestExchangeWrapper is
     // ============ Private functions ============
 
     function parseData(
-        bytes memory data
+        bytes memory orderData
     )
         private
         pure
         returns (Order memory)
     {
         require(
-            data.length == 160,
-            "Exchange data invalid length"
+            orderData.length == 160,
+            "orderData invalid length"
         );
 
-        uint256 makerToken;
-        uint256 takerToken;
-        uint256 originator;
-        uint256 makerAmount;
-        uint256 takerAmount;
+        Order memory order;
 
         /* solium-disable-next-line security/no-inline-assembly */
         assembly {
-            originator := mload(add(data, 32))
-            makerToken := mload(add(data, 64))
-            takerToken := mload(add(data, 92))
-            makerAmount := mload(add(data, 128))
-            takerAmount := mload(add(data, 160))
+            mstore(order,           mload(add(orderData, 32)))  // originator
+            mstore(add(order, 32),  mload(add(orderData, 64)))  // makerToken
+            mstore(add(order, 64),  mload(add(orderData, 96)))  // takerToken
+            mstore(add(order, 96),  mload(add(orderData, 128))) // makerAmount
+            mstore(add(order, 128), mload(add(orderData, 160))) // takerAmount
         }
 
-        return Order({
-            originator: address(originator),
-            makerToken: address(makerToken),
-            takerToken: address(takerToken),
-            makerAmount: makerAmount,
-            takerAmount: takerAmount
-        });
+        return order;
     }
 }
