@@ -46,5 +46,6 @@
             "address": "0xdf22045d446fea3867d83bd3ef5e8688ec888038",
             "transactionHash": "0xead3e041c82711399e9871620d1af2c0fc53256b4b825ae5cf3e2e9e03946085"
         }
-    }
+    },
+    "TestExchangeWrapper": {}
 }

@@ -20,12 +20,22 @@ import BN from 'bn.js';
 import BigNumber from 'bignumber.js';
 
 export enum OrderType {
+  Test = 'TEST',
   ZeroExV2 = 'ZERO_EX_V2',
   OasisV1 = 'OASIS_V1',
+  OpenDirectly = 'OPEN_DIRECTLY',
 }
 
 export interface Order {
   type: OrderType;
+}
+
+export interface TestOrder extends Order {
+  originator: string;
+  makerToken: string;
+  takerToken: string;
+  makerAmount: BigNumber | BN;
+  takerAmount: BigNumber | BN;
 }
 
 export interface ZeroExV2Order extends Order {
@@ -48,3 +58,5 @@ export interface ZeroExV2Order extends Order {
 export interface OasisV1Order extends Order {
   id: string | BN;
 }
+
+export interface OpenDirectlyOrder extends Order {}
