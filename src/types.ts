@@ -28,6 +28,7 @@ export enum OrderType {
 
 export interface Order {
   type: OrderType;
+  exchangeWrapperAddress?: string;
 }
 
 export interface TestOrder extends Order {

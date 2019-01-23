@@ -42,25 +42,29 @@ export class OrderMapper {
       case OrderType.Test:
         return {
           bytes: this.testExchangeWrapper.orderToBytes(orderData as TestOrder),
-          exchangeWrapperAddress: this.testExchangeWrapper.getAddress(),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.testExchangeWrapper.getAddress(),
         };
 
       case OrderType.ZeroExV2:
         return {
           bytes: this.zeroExV2ExchangeWrapper.orderToBytes(orderData as ZeroExV2Order),
-          exchangeWrapperAddress: this.zeroExV2ExchangeWrapper.getAddress(),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.zeroExV2ExchangeWrapper.getAddress(),
         };
 
       case OrderType.OasisV1:
         return {
           bytes: this.oasisV1SimpleExchangeWrapper.orderToBytes(orderData as OasisV1Order),
-          exchangeWrapperAddress: this.oasisV1SimpleExchangeWrapper.getAddress(),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.oasisV1SimpleExchangeWrapper.getAddress(),
         };
 
       case OrderType.OpenDirectly:
         return {
           bytes: this.openDirectlyExchangeWrapper.orderToBytes(orderData as OpenDirectlyOrder),
-          exchangeWrapperAddress: this.openDirectlyExchangeWrapper.getAddress(),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.openDirectlyExchangeWrapper.getAddress(),
         };
 
       default:
