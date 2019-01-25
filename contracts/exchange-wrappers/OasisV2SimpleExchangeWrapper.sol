@@ -16,8 +16,7 @@
 
 */
 
-pragma solidity 0.4.24;
-pragma experimental "v0.5.0";
+pragma solidity 0.5.1;
 
 import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import { ISimpleMarketV1 } from "../../../external/Maker/Oasis/ISimpleMarketV1.sol";
