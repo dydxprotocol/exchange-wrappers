@@ -23,6 +23,7 @@ export enum OrderType {
   Test = 'TEST',
   ZeroExV2 = 'ZERO_EX_V2',
   OasisV1 = 'OASIS_V1',
+  OasisV2 = 'OASIS_V2',
   OpenDirectly = 'OPEN_DIRECTLY',
 }
 
@@ -57,6 +58,10 @@ export interface ZeroExV2Order extends Order {
 }
 
 export interface OasisV1Order extends Order {
+  id: string | BN;
+}
+
+export interface OasisV2Order extends Order {
   id: string | BN;
 }
 

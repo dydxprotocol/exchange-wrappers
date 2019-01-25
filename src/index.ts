@@ -23,5 +23,6 @@ export {
   TestOrder,
   ZeroExV2Order,
   OasisV1Order,
+  OasisV2Order,
   OpenDirectlyOrder,
 } from './types';
