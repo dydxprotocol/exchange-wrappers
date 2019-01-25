@@ -18,13 +18,13 @@
 
 pragma solidity 0.5.1;
 
-import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import { ISimpleMarketV1 } from "../../../external/Maker/Oasis/ISimpleMarketV1.sol";
-import { AdvancedTokenInteract } from "../../../lib/AdvancedTokenInteract.sol";
-import { MathHelpers } from "../../../lib/MathHelpers.sol";
-import { TokenInteract } from "../../../lib/TokenInteract.sol";
-import { ExchangeReader } from "../../interfaces/ExchangeReader.sol";
-import { ExchangeWrapper } from "../../interfaces/ExchangeWrapper.sol";
+import { ISimpleMarketV1 } from "../external/Maker/OasisV1/ISimpleMarketV1.sol";
+import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import { ExchangeReader } from "../interfaces/ExchangeReader.sol";
+import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
+import { AdvancedTokenInteract } from "../lib/AdvancedTokenInteract.sol";
+import { MathHelpers } from "../lib/MathHelpers.sol";
+import { TokenInteract } from "../lib/TokenInteract.sol";
 
 
 /**
@@ -74,7 +74,7 @@ contract OasisV2SimpleExchangeWrapper is
         address makerToken,
         address takerToken,
         uint256 requestedFillAmount,
-        bytes orderData
+        bytes calldata orderData
     )
         external
         returns (uint256)
@@ -113,7 +113,7 @@ contract OasisV2SimpleExchangeWrapper is
         address makerToken,
         address takerToken,
         uint256 desiredMakerToken,
-        bytes orderData
+        bytes calldata orderData
     )
         external
         view
@@ -135,7 +135,7 @@ contract OasisV2SimpleExchangeWrapper is
     function getMaxMakerAmount(
         address makerToken,
         address takerToken,
-        bytes orderData
+        bytes calldata orderData
     )
         external
         view
@@ -250,7 +250,7 @@ contract OasisV2SimpleExchangeWrapper is
     }
 
     function bytesToOfferId(
-        bytes orderData
+        bytes memory orderData
     )
         private
         pure
