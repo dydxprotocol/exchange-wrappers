@@ -8,6 +8,7 @@ import {
   OrderType,
   TestOrder,
   OasisV1Order,
+  OasisV2Order,
   ZeroExV2Order,
   OpenDirectlyOrder,
 } from './types';

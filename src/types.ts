@@ -23,6 +23,7 @@ export enum OrderType {
   Test = 'TEST',
   ZeroExV2 = 'ZERO_EX_V2',
   OasisV1 = 'OASIS_V1',
+  OasisV2 = 'OASIS_V2',
   OpenDirectly = 'OPEN_DIRECTLY',
 }
 
