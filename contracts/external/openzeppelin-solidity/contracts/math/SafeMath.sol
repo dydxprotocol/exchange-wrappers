@@ -1,8 +1,8 @@
 /**
- * Copied from openzeppelin-solidity and upgraded to Solidity 0.5.1
+ * Copied from openzeppelin-solidity and upgraded to Solidity ^0.5.0
  */
 
-pragma solidity 0.5.1;
+pragma solidity ^0.5.0;
 
 
 /**
