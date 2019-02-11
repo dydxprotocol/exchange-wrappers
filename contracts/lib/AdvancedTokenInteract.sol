@@ -16,7 +16,7 @@
 
 */
 
-pragma solidity 0.5.1;
+pragma solidity ^0.5.0;
 
 import { MathHelpers } from "./MathHelpers.sol";
 import { TokenInteract } from "./TokenInteract.sol";
