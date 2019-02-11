@@ -49,9 +49,12 @@ module.exports = {
   },
   mocha,
   solc: {
-    optimizer: {
-      enabled: true,
-      runs: 10000
-    }
-  }
+    version: '0.5.2',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 10000
+      },
+    },
+  },
 };

@@ -42,18 +42,18 @@
   },
   "homepage": "https://github.com/dydxprotocol/exchange-wrappers#readme",
   "devDependencies": {
-    "solium": "^1.1.8",
-    "truffle": "^5.0.0-beta.2",
-    "tslint": "^5.11.0",
+    "solium": "^1.2.3",
+    "truffle": "^5.0.3",
+    "tslint": "^5.12.1",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-no-focused-test": "^0.5.0",
-    "typechain": "^0.3.9",
-    "typescript": "^3.2.2"
+    "typechain": "^0.3.11",
+    "typescript": "^3.3.3"
   },
   "dependencies": {
     "@types/bn.js": "^4.11.4",
     "bignumber.js": "^8.0.2",
     "bn.js": "^4.11.8",
-    "web3-utils": "^1.0.0-beta.37"
+    "web3-utils": "1.0.0-beta.37"
   }
 }
