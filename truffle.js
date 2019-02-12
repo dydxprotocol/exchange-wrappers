@@ -48,12 +48,14 @@ module.exports = {
     }
   },
   mocha,
-  solc: {
-    version: '0.5.2',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 10000
+  compilers: {
+    solc: {
+      version: '0.5.3',
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 10000
+        },
       },
     },
   },

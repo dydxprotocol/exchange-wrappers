@@ -16,7 +16,7 @@
 
 */
 
-pragma solidity ^0.5.0;
+pragma solidity 0.5.3;
 
 import { IMatchingMarketV1 } from "../external/Maker/OasisV1/IMatchingMarketV1.sol";
 import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";

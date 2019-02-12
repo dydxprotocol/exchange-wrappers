@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity 0.5.3;
 
 import { ISimpleMarketV1 } from "./ISimpleMarketV1.sol";
 
