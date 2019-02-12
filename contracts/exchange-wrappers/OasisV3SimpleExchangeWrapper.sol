@@ -16,7 +16,7 @@
 
 */
 
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 pragma experimental "v0.5.0";
 
 import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
