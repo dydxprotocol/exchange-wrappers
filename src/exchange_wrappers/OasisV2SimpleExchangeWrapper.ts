@@ -5,7 +5,7 @@ import {
 } from '../types';
 import { OasisV2SimpleExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
-export  class OasisV2SimpleExchangeWrapper {
+export class OasisV2SimpleExchangeWrapper {
   private networkId: number;
 
   constructor(

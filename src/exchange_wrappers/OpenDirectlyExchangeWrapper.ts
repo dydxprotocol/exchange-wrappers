@@ -1,7 +1,7 @@
 import { OpenDirectlyOrder } from '../types';
 import { OpenDirectlyExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
-export  class OpenDirectlyExchangeWrapper {
+export class OpenDirectlyExchangeWrapper {
   private networkId: number;
 
   constructor(
