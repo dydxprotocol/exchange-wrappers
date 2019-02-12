@@ -1,11 +1,11 @@
 import web3Utils from 'web3-utils';
 import BN from 'bn.js';
 import {
-  OasisV1Order,
+  OasisV3Order,
 } from '../types';
-import { OasisV1SimpleExchangeWrapper as Contract } from '../../migrations/deployed.json';
+import { OasisV3SimpleExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
-export class OasisV1SimpleExchangeWrapper {
+export class OasisV3SimpleExchangeWrapper {
   private networkId: number;
 
   constructor(
@@ -24,7 +24,7 @@ export class OasisV1SimpleExchangeWrapper {
     return Contract[this.networkId.toString()].address;
   }
 
-  public orderToBytes(order: OasisV1Order): number[] {
+  public orderToBytes(order: OasisV3Order): number[] {
     return this.toBytes(order.id);
   }
 
