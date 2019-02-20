@@ -29,7 +29,8 @@ export class TestExchangeWrapper {
       .concat(this.toBytes(order.makerToken))
       .concat(this.toBytes(order.takerToken))
       .concat(this.toBytes(order.makerAmount))
-      .concat(this.toBytes(order.takerAmount));
+      .concat(this.toBytes(order.takerAmount))
+      .concat(this.toBytes(order.allegedTakerAmount));
   }
 
   private toBytes(val: string | BN | BigNumber) {
