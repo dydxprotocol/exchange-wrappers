@@ -46,6 +46,7 @@ contract TestExchangeWrapper is
         address takerToken;
         uint256 makerAmount;
         uint256 takerAmount;
+        uint256 allegedTakerAmount;
     }
 
     // ============ ExchangeWrapper functions ============
@@ -73,6 +74,10 @@ contract TestExchangeWrapper is
         );
         require(
             order.takerToken == takerToken,
+            "TakerToken mismatch"
+        );
+        require(
+            order.takerAmount == requestedFillAmount,
             "TakerToken mismatch"
         );
 
@@ -107,7 +112,7 @@ contract TestExchangeWrapper is
             "TakerToken mismatch"
         );
 
-        return order.takerAmount;
+        return order.allegedTakerAmount;
     }
 
     // ============ Private functions ============
@@ -120,7 +125,7 @@ contract TestExchangeWrapper is
         returns (Order memory)
     {
         require(
-            orderData.length == 160,
+            orderData.length == 192,
             "orderData invalid length"
         );
 
@@ -133,6 +138,7 @@ contract TestExchangeWrapper is
             mstore(add(order, 64),  mload(add(orderData, 96)))  // takerToken
             mstore(add(order, 96),  mload(add(orderData, 128))) // makerAmount
             mstore(add(order, 128), mload(add(orderData, 160))) // takerAmount
+            mstore(add(order, 160), mload(add(orderData, 192))) // allegedTakerAmount
         }
 
         return order;
