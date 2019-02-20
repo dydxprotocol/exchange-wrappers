@@ -47,6 +47,7 @@ contract TestExchangeWrapper is
         uint256 makerAmount;
         uint256 takerAmount;
         uint256 allegedTakerAmount;
+        uint256 desiredMakerAmount;
     }
 
     // ============ ExchangeWrapper functions ============
@@ -100,8 +101,8 @@ contract TestExchangeWrapper is
         Order memory order = parseData(orderData);
 
         require(
-            order.makerAmount == desiredMakerToken,
-            "MakerAmount mismatch"
+            order.desiredMakerAmount == desiredMakerToken,
+            "DesiredMakerAmount mismatch"
         );
         require(
             order.makerToken == makerToken,
@@ -125,7 +126,7 @@ contract TestExchangeWrapper is
         returns (Order memory)
     {
         require(
-            orderData.length == 192,
+            orderData.length == 224,
             "orderData invalid length"
         );
 
@@ -139,6 +140,7 @@ contract TestExchangeWrapper is
             mstore(add(order, 96),  mload(add(orderData, 128))) // makerAmount
             mstore(add(order, 128), mload(add(orderData, 160))) // takerAmount
             mstore(add(order, 160), mload(add(orderData, 192))) // allegedTakerAmount
+            mstore(add(order, 192), mload(add(orderData, 224))) // desiredMakerAmount
         }
 
         return order;
