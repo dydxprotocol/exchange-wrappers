@@ -39,6 +39,7 @@ export interface TestOrder extends Order {
   takerToken: string;
   makerAmount: BigNumber | BN;
   takerAmount: BigNumber | BN;
+  allegedTakerAmount: BigNumber | BN;
 }
 
 export interface ZeroExV2Order extends Order {
