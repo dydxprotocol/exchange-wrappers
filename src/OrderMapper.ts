@@ -2,6 +2,7 @@ import { ZeroExV2ExchangeWrapper } from './exchange_wrappers/ZeroExV2ExchangeWra
 import { OasisV1SimpleExchangeWrapper } from './exchange_wrappers/OasisV1SimpleExchangeWrapper';
 import { OasisV2SimpleExchangeWrapper } from './exchange_wrappers/OasisV2SimpleExchangeWrapper';
 import { OasisV3SimpleExchangeWrapper } from './exchange_wrappers/OasisV3SimpleExchangeWrapper';
+import { OasisV3MatchingExchangeWrapper } from './exchange_wrappers/OasisV3MatchingExchangeWrapper';
 import { TestExchangeWrapper } from './exchange_wrappers/TestExchangeWrapper';
 import { OpenDirectlyExchangeWrapper } from './exchange_wrappers/OpenDirectlyExchangeWrapper';
 import {
@@ -11,6 +12,7 @@ import {
   OasisV1Order,
   OasisV2Order,
   OasisV3Order,
+  OasisV3MarketOrder,
   ZeroExV2Order,
   OpenDirectlyOrder,
 } from './types';
@@ -21,6 +23,7 @@ export class OrderMapper {
   private oasisV1SimpleExchangeWrapper: OasisV1SimpleExchangeWrapper;
   private oasisV2SimpleExchangeWrapper: OasisV2SimpleExchangeWrapper;
   private oasisV3SimpleExchangeWrapper: OasisV3SimpleExchangeWrapper;
+  private oasisV3MatchingExchangeWrapper: OasisV3MatchingExchangeWrapper;
   private openDirectlyExchangeWrapper: OpenDirectlyExchangeWrapper;
 
   constructor(
@@ -31,6 +34,7 @@ export class OrderMapper {
     this.oasisV1SimpleExchangeWrapper = new OasisV1SimpleExchangeWrapper(networkId);
     this.oasisV2SimpleExchangeWrapper = new OasisV2SimpleExchangeWrapper(networkId);
     this.oasisV3SimpleExchangeWrapper = new OasisV3SimpleExchangeWrapper(networkId);
+    this.oasisV3MatchingExchangeWrapper = new OasisV3MatchingExchangeWrapper(networkId);
     this.openDirectlyExchangeWrapper = new OpenDirectlyExchangeWrapper(networkId);
   }
 
@@ -42,6 +46,7 @@ export class OrderMapper {
     this.oasisV1SimpleExchangeWrapper.setNetworkId(networkId);
     this.oasisV2SimpleExchangeWrapper.setNetworkId(networkId);
     this.oasisV3SimpleExchangeWrapper.setNetworkId(networkId);
+    this.oasisV3MatchingExchangeWrapper.setNetworkId(networkId);
     this.openDirectlyExchangeWrapper.setNetworkId(networkId);
   }
 
@@ -82,6 +87,13 @@ export class OrderMapper {
           bytes: this.oasisV3SimpleExchangeWrapper.orderToBytes(orderData as OasisV3Order),
           exchangeWrapperAddress: order.exchangeWrapperAddress ||
             this.oasisV3SimpleExchangeWrapper.getAddress(),
+        };
+
+      case OrderType.OasisV3Market:
+        return {
+          bytes: this.oasisV3MatchingExchangeWrapper.orderToBytes(orderData as OasisV3MarketOrder),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.oasisV3MatchingExchangeWrapper.getAddress(),
         };
 
       case OrderType.OpenDirectly:
