@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/exchange-wrappers",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Collection of exchange wrapper contracts used by the dYdX Protocol",
   "main": "dist/js/src/index.js",
   "types": "dist/types/src/index.d.ts",
