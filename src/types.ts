@@ -25,6 +25,7 @@ export enum OrderType {
   OasisV1 = 'OASIS_V1',
   OasisV2 = 'OASIS_V2',
   OasisV3 = 'OASIS_V3',
+  OasisV3Market = 'OASIS_V3_MARKET',
   OpenDirectly = 'OPEN_DIRECTLY',
 }
 
@@ -70,6 +71,10 @@ export interface OasisV2Order extends Order {
 
 export interface OasisV3Order extends Order {
   id: string | BN;
+}
+
+export interface OasisV3MarketOrder extends Order {
+  maxPrice?: string | BigNumber;
 }
 
 export interface OpenDirectlyOrder extends Order {}
