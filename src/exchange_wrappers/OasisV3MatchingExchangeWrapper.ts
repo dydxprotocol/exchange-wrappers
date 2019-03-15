@@ -30,7 +30,7 @@ export class OasisV3MatchingExchangeWrapper {
     }
     const price = new BigNumber(order.maxPrice);
     const priceDenominator = new BigNumber('1e18');
-    const priceNumerator = price.times(priceDenominator);
+    const priceNumerator = price.times(priceDenominator).integerValue(BigNumber.ROUND_DOWN);
     return []
       .concat(this.toBytes(priceNumerator))
       .concat(this.toBytes(priceDenominator));
