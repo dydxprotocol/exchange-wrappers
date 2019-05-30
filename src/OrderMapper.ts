@@ -1,10 +1,19 @@
-import { ZeroExV2ExchangeWrapper } from './exchange_wrappers/ZeroExV2ExchangeWrapper';
-import { OasisV1SimpleExchangeWrapper } from './exchange_wrappers/OasisV1SimpleExchangeWrapper';
-import { OasisV2SimpleExchangeWrapper } from './exchange_wrappers/OasisV2SimpleExchangeWrapper';
-import { OasisV3SimpleExchangeWrapper } from './exchange_wrappers/OasisV3SimpleExchangeWrapper';
-import { OasisV3MatchingExchangeWrapper } from './exchange_wrappers/OasisV3MatchingExchangeWrapper';
-import { TestExchangeWrapper } from './exchange_wrappers/TestExchangeWrapper';
-import { OpenDirectlyExchangeWrapper } from './exchange_wrappers/OpenDirectlyExchangeWrapper';
+import { ZeroExV2ExchangeWrapper } from
+  './exchange_wrappers/ZeroExV2ExchangeWrapper';
+import { ZeroExV2MultiOrderExchangeWrapper } from
+  './exchange_wrappers/ZeroExV2MultiOrderExchangeWrapper';
+import { OasisV1SimpleExchangeWrapper } from
+  './exchange_wrappers/OasisV1SimpleExchangeWrapper';
+import { OasisV2SimpleExchangeWrapper } from
+  './exchange_wrappers/OasisV2SimpleExchangeWrapper';
+import { OasisV3SimpleExchangeWrapper } from
+  './exchange_wrappers/OasisV3SimpleExchangeWrapper';
+import { OasisV3MatchingExchangeWrapper } from
+  './exchange_wrappers/OasisV3MatchingExchangeWrapper';
+import { TestExchangeWrapper } from
+  './exchange_wrappers/TestExchangeWrapper';
+import { OpenDirectlyExchangeWrapper } from
+  './exchange_wrappers/OpenDirectlyExchangeWrapper';
 import {
   Order,
   OrderType,
@@ -14,12 +23,14 @@ import {
   OasisV3Order,
   OasisV3MarketOrder,
   ZeroExV2Order,
+  ZeroExV2MultiOrder,
   OpenDirectlyOrder,
 } from './types';
 
 export class OrderMapper {
   private testExchangeWrapper: TestExchangeWrapper;
   private zeroExV2ExchangeWrapper: ZeroExV2ExchangeWrapper;
+  private zeroExV2MultiOrderExchangeWrapper: ZeroExV2MultiOrderExchangeWrapper;
   private oasisV1SimpleExchangeWrapper: OasisV1SimpleExchangeWrapper;
   private oasisV2SimpleExchangeWrapper: OasisV2SimpleExchangeWrapper;
   private oasisV3SimpleExchangeWrapper: OasisV3SimpleExchangeWrapper;
@@ -31,6 +42,7 @@ export class OrderMapper {
   ) {
     this.testExchangeWrapper = new TestExchangeWrapper(networkId);
     this.zeroExV2ExchangeWrapper = new ZeroExV2ExchangeWrapper(networkId);
+    this.zeroExV2MultiOrderExchangeWrapper = new ZeroExV2MultiOrderExchangeWrapper(networkId);
     this.oasisV1SimpleExchangeWrapper = new OasisV1SimpleExchangeWrapper(networkId);
     this.oasisV2SimpleExchangeWrapper = new OasisV2SimpleExchangeWrapper(networkId);
     this.oasisV3SimpleExchangeWrapper = new OasisV3SimpleExchangeWrapper(networkId);
@@ -43,6 +55,7 @@ export class OrderMapper {
   ): void {
     this.testExchangeWrapper.setNetworkId(networkId);
     this.zeroExV2ExchangeWrapper.setNetworkId(networkId);
+    this.zeroExV2MultiOrderExchangeWrapper.setNetworkId(networkId);
     this.oasisV1SimpleExchangeWrapper.setNetworkId(networkId);
     this.oasisV2SimpleExchangeWrapper.setNetworkId(networkId);
     this.oasisV3SimpleExchangeWrapper.setNetworkId(networkId);
@@ -66,6 +79,15 @@ export class OrderMapper {
           bytes: this.zeroExV2ExchangeWrapper.orderToBytes(orderData as ZeroExV2Order),
           exchangeWrapperAddress: order.exchangeWrapperAddress ||
             this.zeroExV2ExchangeWrapper.getAddress(),
+        };
+
+      case OrderType.ZeroExV2MultiOrder:
+        return {
+          bytes: this.zeroExV2MultiOrderExchangeWrapper.orderToBytes(
+            orderData as ZeroExV2MultiOrder,
+          ),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.zeroExV2MultiOrderExchangeWrapper.getAddress(),
         };
 
       case OrderType.OasisV1:

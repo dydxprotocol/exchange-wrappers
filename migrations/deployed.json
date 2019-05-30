@@ -23,6 +23,13 @@
             "transactionHash": "0x8a906360b1ce6be4cf29c24e58da0e7a0c2eb37b00191726f1f89c2e3b786571"
         }
     },
+    "ZeroExV2MultiOrderExchangeWrapper": {
+        "1": {
+            "links": {},
+            "address": "0x103993ff75159f2bf40566dbf92a686df3f7a5e8",
+            "transactionHash": "0xeca67bb2ef4863cd5c5af527f3016088257cfaba28b4f32a58879fae4536b234"
+        }
+    },
     "OasisV1SimpleExchangeWrapper": {
         "1": {
             "links": {},

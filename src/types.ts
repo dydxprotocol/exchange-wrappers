@@ -22,6 +22,7 @@ import BigNumber from 'bignumber.js';
 export enum OrderType {
   Test = 'TEST',
   ZeroExV2 = 'ZERO_EX_V2',
+  ZeroExV2MultiOrder = 'ZERO_EX_V2_MULTI_ORDER',
   OasisV1 = 'OASIS_V1',
   OasisV2 = 'OASIS_V2',
   OasisV3 = 'OASIS_V3',
@@ -44,7 +45,7 @@ export interface TestOrder extends Order {
   desiredMakerAmount: BigNumber | BN;
 }
 
-export interface ZeroExV2Order extends Order {
+interface ZeroExV2OrderBase {
   exchangeAddress: string;
   expirationTimeSeconds: BigNumber | BN;
   feeRecipientAddress: string;
@@ -59,6 +60,14 @@ export interface ZeroExV2Order extends Order {
   takerAssetAmount: BigNumber | BN;
   takerAssetData: string;
   takerFee: BigNumber | BN;
+}
+
+export interface ZeroExV2Order extends Order, ZeroExV2OrderBase {
+}
+
+export interface ZeroExV2MultiOrder extends Order {
+  maxPrice?: string | BigNumber;
+  orders: ZeroExV2OrderBase[];
 }
 
 export interface OasisV1Order extends Order {
