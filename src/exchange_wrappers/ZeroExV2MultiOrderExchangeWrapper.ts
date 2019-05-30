@@ -36,7 +36,7 @@ export class ZeroExV2MultiOrderExchangeWrapper {
         .concat(this.toBytes(base.times(multiOrder.maxPrice)))
         .concat(this.toBytes(base));
     }
-    for (let i = 0; i < multiOrder.orders.length; i++) {
+    for (let i = 0; i < multiOrder.orders.length; i += 1) {
       const order = multiOrder.orders[i];
       result = result
         .concat(this.toBytes(order.makerAddress))

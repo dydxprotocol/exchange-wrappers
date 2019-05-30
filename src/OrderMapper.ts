@@ -1,11 +1,19 @@
-import { ZeroExV2ExchangeWrapper } from './exchange_wrappers/ZeroExV2ExchangeWrapper';
-import { ZeroExV2MultiOrderExchangeWrapper } from './exchange_wrappers/ZeroExV2MultiOrderExchangeWrapper';
-import { OasisV1SimpleExchangeWrapper } from './exchange_wrappers/OasisV1SimpleExchangeWrapper';
-import { OasisV2SimpleExchangeWrapper } from './exchange_wrappers/OasisV2SimpleExchangeWrapper';
-import { OasisV3SimpleExchangeWrapper } from './exchange_wrappers/OasisV3SimpleExchangeWrapper';
-import { OasisV3MatchingExchangeWrapper } from './exchange_wrappers/OasisV3MatchingExchangeWrapper';
-import { TestExchangeWrapper } from './exchange_wrappers/TestExchangeWrapper';
-import { OpenDirectlyExchangeWrapper } from './exchange_wrappers/OpenDirectlyExchangeWrapper';
+import { ZeroExV2ExchangeWrapper } from
+  './exchange_wrappers/ZeroExV2ExchangeWrapper';
+import { ZeroExV2MultiOrderExchangeWrapper } from
+  './exchange_wrappers/ZeroExV2MultiOrderExchangeWrapper';
+import { OasisV1SimpleExchangeWrapper } from
+  './exchange_wrappers/OasisV1SimpleExchangeWrapper';
+import { OasisV2SimpleExchangeWrapper } from
+  './exchange_wrappers/OasisV2SimpleExchangeWrapper';
+import { OasisV3SimpleExchangeWrapper } from
+  './exchange_wrappers/OasisV3SimpleExchangeWrapper';
+import { OasisV3MatchingExchangeWrapper } from
+  './exchange_wrappers/OasisV3MatchingExchangeWrapper';
+import { TestExchangeWrapper } from
+  './exchange_wrappers/TestExchangeWrapper';
+import { OpenDirectlyExchangeWrapper } from
+  './exchange_wrappers/OpenDirectlyExchangeWrapper';
 import {
   Order,
   OrderType,
@@ -75,7 +83,9 @@ export class OrderMapper {
 
       case OrderType.ZeroExV2MultiOrder:
         return {
-          bytes: this.zeroExV2MultiOrderExchangeWrapper.orderToBytes(orderData as ZeroExV2MultiOrder),
+          bytes: this.zeroExV2MultiOrderExchangeWrapper.orderToBytes(
+            orderData as ZeroExV2MultiOrder,
+          ),
           exchangeWrapperAddress: order.exchangeWrapperAddress ||
             this.zeroExV2MultiOrderExchangeWrapper.getAddress(),
         };
