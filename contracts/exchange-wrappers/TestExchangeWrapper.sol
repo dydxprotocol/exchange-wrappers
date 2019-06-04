@@ -16,7 +16,7 @@
 
 */
 
-pragma solidity 0.5.3;
+pragma solidity 0.5.8;
 
 import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
 import { TokenInteract } from "../lib/TokenInteract.sol";

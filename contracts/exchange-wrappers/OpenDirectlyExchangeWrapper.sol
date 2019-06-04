@@ -16,9 +16,9 @@
 
 */
 
-pragma solidity 0.5.3;
+pragma solidity 0.5.8;
 
-import { SafeMath } from "../external/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
 import { TokenInteract } from "../lib/TokenInteract.sol";
 
