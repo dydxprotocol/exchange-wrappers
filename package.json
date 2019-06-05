@@ -43,7 +43,7 @@
   "homepage": "https://github.com/dydxprotocol/exchange-wrappers#readme",
   "devDependencies": {
     "solium": "^1.2.3",
-    "truffle": "^5.0.3",
+    "truffle": "^5.0.17",
     "tslint": "^5.12.1",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-no-focused-test": "^0.5.0",
@@ -54,6 +54,7 @@
     "@types/bn.js": "^4.11.4",
     "bignumber.js": "^8.0.2",
     "bn.js": "^4.11.8",
+    "openzeppelin-solidity": "2.2.0",
     "web3-utils": "1.0.0-beta.37"
   }
 }
