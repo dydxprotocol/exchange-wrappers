@@ -32,8 +32,9 @@ export class ZeroExV2MultiOrderExchangeWrapper {
         .concat(this.toBytes(zero));
     } else {
       const base = new BigNumber('1e18');
+      const numerator = base.times(multiOrder.maxPrice).integerValue(BigNumber.ROUND_CEIL);
       result = result
-        .concat(this.toBytes(base.times(multiOrder.maxPrice)))
+        .concat(this.toBytes(numerator))
         .concat(this.toBytes(base));
     }
     for (let i = 0; i < multiOrder.orders.length; i += 1) {
