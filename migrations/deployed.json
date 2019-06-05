@@ -26,8 +26,8 @@
     "ZeroExV2MultiOrderExchangeWrapper": {
         "1": {
             "links": {},
-            "address": "0x103993ff75159f2bf40566dbf92a686df3f7a5e8",
-            "transactionHash": "0xeca67bb2ef4863cd5c5af527f3016088257cfaba28b4f32a58879fae4536b234"
+            "address": "0x6fbfa42bc2f8c6ce9076a924a5e1ea8c0f3647ca",
+            "transactionHash": "0x9a5d4ee5616b302afba73662c7bd3eca88d24e5ea11166d478c0375f7b8c0eaf"
         }
     },
     "OasisV1SimpleExchangeWrapper": {
