@@ -24,6 +24,7 @@ import { IExchange } from "../external/0x/v2/interfaces/IExchange.sol";
 import { LibFillResults } from "../external/0x/v2/libs/LibFillResults.sol";
 import { LibOrder } from "../external/0x/v2/libs/LibOrder.sol";
 import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
+import { AdvancedTokenInteract } from "../lib/AdvancedTokenInteract.sol";
 import { MathHelpers } from "../lib/MathHelpers.sol";
 import { TokenInteract } from "../lib/TokenInteract.sol";
 
@@ -33,7 +34,7 @@ import { TokenInteract } from "../lib/TokenInteract.sol";
  * @author dYdX
  *
  * dYdX ExchangeWrapper to interface with 0x Version 2. Sends multiple orders at once. Assumes no
- * fees.
+ * ZRX fees.
  */
 contract ZeroExV2MultiOrderExchangeWrapper is
     LibFillResults,
@@ -42,13 +43,14 @@ contract ZeroExV2MultiOrderExchangeWrapper is
 {
     using SafeMath for uint256;
     using TokenInteract for address;
+    using AdvancedTokenInteract for address;
 
     // ============ Constants ============
 
     // number of bytes in the maxPrice data
     uint256 constant PRICE_DATA_LENGTH = 64;
 
-    // number of bytes per (order+signature)
+    // number of bytes per (order + signature)
     uint256 constant ORDER_DATA_LENGTH = 322;
 
     // ============ Structs ============
@@ -80,6 +82,16 @@ contract ZeroExV2MultiOrderExchangeWrapper is
 
     // ============ Public Functions ============
 
+    /**
+     * Exchange some amount of takerToken for makerToken.
+     *
+     * @param  receiver             Address to set allowance on once the trade has completed
+     * @param  makerToken           Address of makerToken, the token to receive
+     * @param  takerToken           Address of takerToken, the token to pay
+     * @param  requestedFillAmount  Amount of takerToken being paid
+     * @param  orderData            Arbitrary bytes data for any information to pass to the exchange
+     * @return                      The amount of makerToken received
+     */
     function exchange(
         address /* tradeOriginator */,
         address receiver,
@@ -97,12 +109,8 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         Order[] memory orders = parseOrders(orderData, makerToken, takerToken);
         bytes[] memory signatures = parseSignatures(orderData);
 
-        // ensure that the exchange can take the tokens from this contract
-        ensureAllowance(
-            takerToken,
-            ZERO_EX_TOKEN_PROXY,
-            requestedFillAmount
-        );
+        // ensure that the exchange can take the takerTokens from this contract
+        takerToken.ensureAllowance(ZERO_EX_TOKEN_PROXY, requestedFillAmount);
 
         // do the exchange
         FillResults memory totalFillResults = IExchange(ZERO_EX_EXCHANGE).marketSellOrdersNoThrow(
@@ -124,12 +132,24 @@ contract ZeroExV2MultiOrderExchangeWrapper is
             totalFillResults.makerAssetFilledAmount
         );
 
-        // set allowance
-        ensureAllowance(makerToken, receiver, totalFillResults.makerAssetFilledAmount);
+        // ensure that the caller can take the makerTokens from this contract
+        makerToken.ensureAllowance(receiver, totalFillResults.makerAssetFilledAmount);
 
         return totalFillResults.makerAssetFilledAmount;
     }
 
+    /**
+     * Get amount of takerToken required to buy a certain amount of makerToken for a given trade.
+     * Should match the takerToken amount used in exchangeForAmount. If the order cannot provide
+     * exactly desiredMakerToken, then it must return the price to buy the minimum amount greater
+     * than desiredMakerToken
+     *
+     * @param  makerToken         Address of makerToken, the token to receive
+     * @param  takerToken         Address of takerToken, the token to pay
+     * @param  desiredMakerToken  Amount of makerToken requested
+     * @param  orderData          Arbitrary bytes data for any information to pass to the exchange
+     * @return                    Amount of takerToken the needed to complete the transaction
+     */
     function getExchangeCost(
         address makerToken,
         address takerToken,
@@ -146,82 +166,71 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         Order[] memory orders = parseOrders(orderData, makerToken, takerToken);
 
         // keep running count of how much takerToken is needed until desiredMakerToken is acquired
-        TokenAmounts memory running;
-        running.takerAmount = 0;
-        running.makerAmount = desiredMakerToken;
+        TokenAmounts memory total;
+        total.takerAmount = 0;
+        total.makerAmount = desiredMakerToken;
+
+        // read exchange address from storage
+        IExchange zeroExExchange = IExchange(ZERO_EX_EXCHANGE);
 
         // for all orders
-        for (uint256 i = 0; i < orders.length && running.makerAmount != 0; i++) {
+        for (uint256 i = 0; i < orders.length && total.makerAmount != 0; i++) {
             Order memory order = orders[i];
 
             // get order info
-            OrderInfo memory info = IExchange(ZERO_EX_EXCHANGE).getOrderInfo(order);
+            OrderInfo memory info = zeroExExchange.getOrderInfo(order);
 
             // ignore unfillable orders
             if (info.orderStatus != uint8(OrderStatus.FILLABLE)) {
                 continue;
             }
 
-            // calculate the remaining taker and maker amounts in the order
-            TokenAmounts memory remaining;
-            remaining.takerAmount = order.takerAssetAmount.sub(info.orderTakerAssetFilledAmount);
-            remaining.makerAmount = MathHelpers.getPartialAmount(
-                remaining.takerAmount,
+            // calculate the remaining available taker and maker amounts in the order
+            TokenAmounts memory available;
+            available.takerAmount = order.takerAssetAmount.sub(info.orderTakerAssetFilledAmount);
+            available.makerAmount = MathHelpers.getPartialAmount(
+                available.takerAmount,
                 order.takerAssetAmount,
                 order.makerAssetAmount
             );
 
-            // bound the remaining amounts by the maker amount still needed
-            if (remaining.makerAmount > running.makerAmount) {
-                remaining.makerAmount = running.makerAmount;
-                remaining.takerAmount = MathHelpers.getPartialAmountRoundedUp(
+            // bound the remaining available amounts by the maker amount still needed
+            if (available.makerAmount > total.makerAmount) {
+                available.makerAmount = total.makerAmount;
+                available.takerAmount = MathHelpers.getPartialAmountRoundedUp(
                     order.takerAssetAmount,
                     order.makerAssetAmount,
-                    remaining.makerAmount
+                    available.makerAmount
                 );
             }
 
             // update the running tallies
-            running.takerAmount = running.takerAmount.add(remaining.takerAmount);
-            running.makerAmount = running.makerAmount.sub(remaining.makerAmount);
+            total.takerAmount = total.takerAmount.add(available.takerAmount);
+            total.makerAmount = total.makerAmount.sub(available.makerAmount);
         }
 
         // require that all amount was bought
         require(
-            running.makerAmount == 0,
+            total.makerAmount == 0,
             "ZeroExV2MultiOrderExchangeWrapper#getExchangeCost: Cannot buy enough maker token"
         );
 
         // validate that max price will not be violated
         validateTradePrice(
             priceRatio,
-            running.takerAmount,
+            total.takerAmount,
             desiredMakerToken
         );
 
         // return the amount of taker token needed
-        return running.takerAmount;
+        return total.takerAmount;
     }
 
     // ============ Private Functions ============
 
-    function ensureAllowance(
-        address token,
-        address spender,
-        uint256 requiredAmount
-    )
-        private
-    {
-        if (token.allowance(address(this), spender) >= requiredAmount) {
-            return;
-        }
-
-        token.approve(
-            spender,
-            MathHelpers.maxUint256()
-        );
-    }
-
+    /**
+     * Validates that a certain takerAmount and makerAmount are within the maxPrice bounds
+     */
     function validateTradePrice(
         TokenAmounts memory priceRatio,
         uint256 takerAmount,
@@ -237,8 +246,9 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         );
     }
 
-    // ============ Order-Data Parsing Functions ============
-
+    /**
+     * Validates that there is at least one order in orderData and that the length is correct
+     */
     function validateOrderData(
         bytes memory orderData
     )
@@ -252,6 +262,9 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         );
     }
 
+    /**
+     * Returns the number of orders given in the orderData
+     */
     function parseNumOrders(
         bytes memory orderData
     )
@@ -262,6 +275,9 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         return orderData.length.sub(PRICE_DATA_LENGTH).div(ORDER_DATA_LENGTH);
     }
 
+    /**
+     * Gets the bit-offset of the index'th order in orderData
+     */
     function getOrderDataOffset(
         uint256 index
     )
@@ -269,9 +285,12 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         pure
         returns (uint256)
     {
-        return PRICE_DATA_LENGTH + index * ORDER_DATA_LENGTH;
+        return PRICE_DATA_LENGTH.add(index.mul(ORDER_DATA_LENGTH));
     }
 
+    /**
+     * Parses the maximum price from orderData
+     */
     function parseMaxPriceRatio(
         bytes memory orderData
     )
@@ -304,6 +323,9 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         });
     }
 
+    /**
+     * Parses all signatures from orderData
+     */
     function parseSignatures(
         bytes memory orderData
     )
@@ -332,6 +354,9 @@ contract ZeroExV2MultiOrderExchangeWrapper is
         return signatures;
     }
 
+    /**
+     * Parses all orders from orderData
+     */
     function parseOrders(
         bytes memory orderData,
         address makerToken,
@@ -360,20 +385,23 @@ contract ZeroExV2MultiOrderExchangeWrapper is
 
             /* solium-disable-next-line security/no-inline-assembly */
             assembly {
-                mstore(order,              mload(add(add(orderData, 32), dataOffset)))  // makerAddress
-                mstore(add(order, 32),     mload(add(add(orderData, 64), dataOffset)))  // takerAddress
-                mstore(add(order, 64),     mload(add(add(orderData, 96), dataOffset)))  // feeRecipientAddress
-                mstore(add(order, 96),     mload(add(add(orderData, 128), dataOffset))) // senderAddress
-                mstore(add(order, 128),    mload(add(add(orderData, 160), dataOffset))) // makerAssetAmount
-                mstore(add(order, 160),    mload(add(add(orderData, 192), dataOffset))) // takerAssetAmount
-                mstore(add(order, 256),    mload(add(add(orderData, 224), dataOffset))) // expirationTimeSeconds
-                mstore(add(order, 288),    mload(add(add(orderData, 256), dataOffset))) // salt
+                mstore(order,           mload(add(add(orderData, 32), dataOffset)))  // makerAddress
+                mstore(add(order, 32),  mload(add(add(orderData, 64), dataOffset)))  // takerAddress
+                mstore(add(order, 64),  mload(add(add(orderData, 96), dataOffset)))  // feeRecipientAddress
+                mstore(add(order, 96),  mload(add(add(orderData, 128), dataOffset))) // senderAddress
+                mstore(add(order, 128), mload(add(add(orderData, 160), dataOffset))) // makerAssetAmount
+                mstore(add(order, 160), mload(add(add(orderData, 192), dataOffset))) // takerAssetAmount
+                mstore(add(order, 256), mload(add(add(orderData, 224), dataOffset))) // expirationTimeSeconds
+                mstore(add(order, 288), mload(add(add(orderData, 256), dataOffset))) // salt
             }
         }
 
         return orders;
     }
 
+    /**
+     * Converts a token address to 0xV2 assetData
+     */
     function tokenAddressToAssetData(
         address tokenAddress
     )
