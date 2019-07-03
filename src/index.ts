@@ -17,12 +17,4 @@
 */
 
 export { OrderMapper } from './OrderMapper';
-export {
-  Order,
-  OrderType,
-  TestOrder,
-  ZeroExV2Order,
-  OasisV1Order,
-  OasisV2Order,
-  OpenDirectlyOrder,
-} from './types';
+export * from './types';
