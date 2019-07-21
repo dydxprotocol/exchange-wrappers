@@ -7,6 +7,7 @@ import { ICoordinatorCore } from "../external/0x/v2/interfaces/ICoordinatorCore.
 import { LibOrder } from "../external/0x/v2/libs/LibOrder.sol";
 import { LibZeroExTransaction } from "../external/0x/v2/libs/LibZeroExTransaction.sol";
 import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
+import { MathHelpers } from "../lib/MathHelpers.sol";
 import { TokenInteract } from "../lib/TokenInteract.sol";
 import { AdvancedTokenInteract } from "../lib/AdvancedTokenInteract.sol";
 
@@ -50,7 +51,15 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         bytes[] approvalSignatures;               // signatures of Coordinators that approved the transaction
     }
 
+    struct TokenBalance {
+        address owner;
+        uint256 balance;
+    }
+
     // ============ State Variables ============
+
+    // address of the ZeroEx V2.1 Exchange
+    address public ZERO_EX_EXCHANGE;
 
     // address of the ZeroEx V2.1 Coordinator
     address public ZERO_EX_COORDINATOR;
@@ -60,11 +69,13 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
 
     // ============ Constructor ============
     constructor(
+        address zeroExExchange,
         address zeroExCoordinator,
         address zeroExProxy
     )
         public
     {
+        ZERO_EX_EXCHANGE = zeroExExchange;
         ZERO_EX_COORDINATOR = zeroExCoordinator;
         ZERO_EX_TOKEN_PROXY = zeroExProxy;
     }
@@ -95,6 +106,7 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         // Ensure that the ERC20Proxy can take the takerTokens from this contract
         takerToken.ensureAllowance(ZERO_EX_TOKEN_PROXY, requestedFillAmount);
 
+        // Decode `orderData`
         (TokenAmounts memory priceRatio, CoordinatorArgs memory args) = abi.decode(
             orderData,
             (TokenAmounts, CoordinatorArgs)
@@ -172,7 +184,31 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         external
         view
         returns (uint256)
-    {}
+    {
+        // Decode `orderData`
+        (TokenAmounts memory priceRatio, CoordinatorArgs memory args) = abi.decode(
+            orderData,
+            (TokenAmounts, CoordinatorArgs)
+        );
+
+        // Keep running count of how much takerToken is needed until desiredMakerToken is acquired
+        TokenAmounts memory total;
+        total.takerAmount = 0;
+        total.makerAmount = desiredMakerToken;
+
+        // gets the exchange cost. modifies total
+        uint256 takerCost = getExchangeCostInternal(
+            makerToken,
+            args.orders,
+            total
+        );
+
+        // validate that max price will not be violated
+        validateTradePrice(priceRatio, takerCost, desiredMakerToken);
+
+        // return the amount of taker token needed
+        return takerCost;
+    }
 
     /**
      * Used to validate `Wallet` signatures for this contract within the 0x Exchange contract.
@@ -189,6 +225,138 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         // All signatures are always considered valid
         // This contract should never hold a balance, but value can be passed through
         return IS_VALID_WALLET_SIGNATURE_MAGIC_VALUE;
+    }
+
+    // ============ Private Functions ============
+
+    /**
+     * Gets the amount of takerToken required to fill the amount of total.makerToken.
+     * Does not return a value, only modifies the values inside total.
+     */
+    function getExchangeCostInternal(
+        address makerToken,
+        Order[] memory orders,
+        TokenAmounts memory total
+    )
+        private
+        view
+        returns (uint256)
+    {
+        // read exchange address from storage
+        IExchange zeroExExchange = IExchange(ZERO_EX_EXCHANGE);
+
+        // cache balances for makers
+        TokenBalance[] memory balances = new TokenBalance[](orders.length);
+
+        // for all orders
+        for (uint256 i = 0; i < orders.length && total.makerAmount != 0; i++) {
+            Order memory order = orders[i];
+
+            // get order info
+            OrderInfo memory info = zeroExExchange.getOrderInfo(order);
+
+            // ignore unfillable orders
+            if (info.orderStatus != uint8(OrderStatus.FILLABLE)) {
+                continue;
+            }
+
+            // calculate the remaining available taker and maker amounts in the order
+            TokenAmounts memory available;
+            available.takerAmount = order.takerAssetAmount.sub(info.orderTakerAssetFilledAmount);
+            available.makerAmount = MathHelpers.getPartialAmount(
+                available.takerAmount,
+                order.takerAssetAmount,
+                order.makerAssetAmount
+            );
+
+            // bound the remaining available amounts by the maker amount still needed
+            if (available.makerAmount > total.makerAmount) {
+                available.makerAmount = total.makerAmount;
+                available.takerAmount = MathHelpers.getPartialAmountRoundedUp(
+                    order.takerAssetAmount,
+                    order.makerAssetAmount,
+                    available.makerAmount
+                );
+            }
+
+            // ignore orders that the maker will not be able to fill
+            if (!makerHasEnoughTokens(
+                makerToken,
+                balances,
+                order.makerAddress,
+                available.makerAmount)
+            ) {
+                continue;
+            }
+
+            // update the running tallies
+            total.takerAmount = total.takerAmount.add(available.takerAmount);
+            total.makerAmount = total.makerAmount.sub(available.makerAmount);
+        }
+
+        // require that entire amount was bought
+        require(
+            total.makerAmount == 0,
+            "ZeroExV2CoordinatorMultiOrderExchangeWrapper#getExchangeCostInternal: Cannot buy enough maker token"
+        );
+
+        return total.takerAmount;
+    }
+
+    /**
+     * Checks and modifies balances to keep track of the expected balance of the maker after filling
+     * each order. Returns true if the maker has enough makerToken left to transfer amount.
+     */
+    function makerHasEnoughTokens(
+        address makerToken,
+        TokenBalance[] memory balances,
+        address makerAddress,
+        uint256 amount
+    )
+        private
+        view
+        returns (bool)
+    {
+        // find the maker's balance in the cache or the first non-populated balance in the cache
+        TokenBalance memory current;
+        uint256 i;
+        for (i = 0; i < balances.length; i++) {
+            current = balances[i];
+            if (
+                current.owner == address(0)
+                || current.owner == makerAddress
+            ) {
+                break;
+            }
+        }
+
+        // if the maker is already in the cache
+        if (current.owner == makerAddress) {
+            if (current.balance >= amount) {
+                current.balance = current.balance.sub(amount);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // if the maker is not already in the cache
+        else {
+            uint256 startingBalance = makerToken.balanceOf(makerAddress);
+            if (startingBalance >= amount) {
+                balances[i] = TokenBalance({
+                    owner: makerAddress,
+                    balance: startingBalance.sub(amount)
+                });
+                return true;
+            } else {
+                balances[i] = TokenBalance({
+                    owner: makerAddress,
+                    balance: startingBalance
+                });
+                return false;
+            }
+        }
     }
 
     /**
