@@ -50,16 +50,6 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         bytes[] approvalSignatures;               // signatures of Coordinators that approved the transaction
     }
 
-    struct MakerTakerTokenBalances {
-        uint256 makerTokenBalance;
-        uint256 takerTokenBalance;
-    }
-
-    struct FillResults {
-        uint256 makerTokenFilledAmount;
-        uint256 takerTokenFilledAmount;
-    }
-
     // ============ State Variables ============
 
     // address of the ZeroEx V2.1 Coordinator
@@ -112,7 +102,7 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
 
         // Query initial balances of makerToken and takerToken
         // These should be 0 unless tokens were erroneously sent to this contract
-        MakerTakerTokenBalances memory initialBalances = getMakerTakerTokenBalances(makerToken, takerToken);
+        TokenAmounts memory initialBalances = getTakerMakerTokenBalances(takerToken, makerToken);
     
         // Encode data for `marketSellOrdersNoThrow`
         bytes memory marketSellOrdersNoThrowData = abi.encodeWithSelector(
@@ -140,25 +130,25 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         );
 
         // Query balances after fill and calculate amounts filled
-        FillResults memory fillResults = calculateFillResults(makerToken, takerToken, initialBalances);
+        TokenAmounts memory fillResults = calculateFillResults(takerToken, makerToken, initialBalances);
 
         // Validate that all taker tokens were sold
         require(
-            fillResults.takerTokenFilledAmount == requestedFillAmount,
+            fillResults.takerAmount == requestedFillAmount,
             "ZeroExV2CoordinatorMultiOrderExchangeWrapper#exchange: Cannot sell enough taker token"
         );
 
         // Validate that max price is not violated
         validateTradePrice(
             priceRatio,
-            fillResults.takerTokenFilledAmount,
-            fillResults.makerTokenFilledAmount
+            fillResults.takerAmount,
+            fillResults.makerAmount
         );
 
         // Ensure that the caller can take the makerTokens from this contract
-        makerToken.ensureAllowance(receiver, fillResults.makerTokenFilledAmount);
+        makerToken.ensureAllowance(receiver, fillResults.makerAmount);
 
-        return fillResults.makerTokenFilledAmount;
+        return fillResults.makerAmount;
     }
 
     /**
@@ -204,17 +194,17 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
     /**
      * Gets maker and taker token balances of this contract.
      */
-    function getMakerTakerTokenBalances(
-        address makerToken,
-        address takerToken
+    function getTakerMakerTokenBalances(
+        address takerToken,
+        address makerToken
     )
         private
         view
-        returns (MakerTakerTokenBalances memory balances)
+        returns (TokenAmounts memory balances)
     {
         address exchangeWrapper = address(this);
-        balances.makerTokenBalance = makerToken.balanceOf(exchangeWrapper);
-        balances.takerTokenBalance = takerToken.balanceOf(exchangeWrapper);
+        balances.makerAmount = makerToken.balanceOf(exchangeWrapper);
+        balances.takerAmount = takerToken.balanceOf(exchangeWrapper);
         return balances;
     }
 
@@ -223,17 +213,17 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
      * of the maker and taker tokens.
      */
     function calculateFillResults(
-        address makerToken,
         address takerToken,
-        MakerTakerTokenBalances memory initialBalances
+        address makerToken,
+        TokenAmounts memory initialBalances
     )
         private
         view
-        returns (FillResults memory fillResults)
+        returns (TokenAmounts memory fillResults)
     {
-        MakerTakerTokenBalances memory currentBalances = getMakerTakerTokenBalances(makerToken, takerToken);
-        fillResults.makerTokenFilledAmount = currentBalances.makerTokenBalance.sub(initialBalances.makerTokenBalance);
-        fillResults.takerTokenFilledAmount = currentBalances.takerTokenBalance.sub(initialBalances.takerTokenBalance);
+        TokenAmounts memory currentBalances = getTakerMakerTokenBalances(takerToken, makerToken);
+        fillResults.makerAmount = currentBalances.makerAmount.sub(initialBalances.makerAmount);
+        fillResults.takerAmount = currentBalances.takerAmount.sub(initialBalances.takerAmount);
         return fillResults;
     }
 
