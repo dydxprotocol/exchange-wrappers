@@ -191,6 +191,9 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
             (TokenAmounts, CoordinatorArgs)
         );
 
+        // Validate that none of the coordinator approvals have expired
+        validateApprovalExpirationTimes(args.approvalExpirationTimeSeconds);
+    
         // Keep running count of how much takerToken is needed until desiredMakerToken is acquired
         TokenAmounts memory total;
         total.takerAmount = 0;
@@ -220,6 +223,7 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         bytes calldata /* signature */
     )
         external
+        pure
         returns (bytes4)
     {
         // All signatures are always considered valid
@@ -393,6 +397,22 @@ contract ZeroExV2CoordinatorMultiOrderExchangeWrapper is
         fillResults.makerAmount = currentBalances.makerAmount.sub(initialBalances.makerAmount);
         fillResults.takerAmount = currentBalances.takerAmount.sub(initialBalances.takerAmount);
         return fillResults;
+    }
+
+    /**
+     * Validates that none of the coordinator approvals have expired
+     */
+    function validateApprovalExpirationTimes(uint256[] memory approvalExpirationTimeSeconds)
+        private
+        view
+    {
+        uint256 length = approvalExpirationTimeSeconds.length;
+        for (uint i = 0; i != length; i++) {
+            require(
+                approvalExpirationTimeSeconds[i] > block.timestamp,
+                "ZeroExV2CoordinatorMultiOrderExchangeWrapper#validateApprovalExpirationTimes: Expired approval"
+            );
+        }
     }
 
     /**
