@@ -1,5 +1,3 @@
-import web3Utils from 'web3-utils';
-import BigNumber from 'bignumber.js';
 import {
   SaiDaiOrder,
 } from '../types';
