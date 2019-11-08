@@ -28,6 +28,7 @@ export enum OrderType {
   OasisV3 = 'OASIS_V3',
   OasisV3Market = 'OASIS_V3_MARKET',
   OpenDirectly = 'OPEN_DIRECTLY',
+  SaiDai = 'SAI_DAI',
 }
 
 export interface Order {
@@ -87,3 +88,5 @@ export interface OasisV3MarketOrder extends Order {
 }
 
 export interface OpenDirectlyOrder extends Order {}
+
+export interface SaiDaiOrder extends Order {}

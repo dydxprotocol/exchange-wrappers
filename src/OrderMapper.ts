@@ -14,6 +14,8 @@ import { TestExchangeWrapper } from
   './exchange_wrappers/TestExchangeWrapper';
 import { OpenDirectlyExchangeWrapper } from
   './exchange_wrappers/OpenDirectlyExchangeWrapper';
+import { SaiDaiExchangeWrapper } from
+  './exchange_wrappers/SaiDaiExchangeWrapper';
 import {
   Order,
   OrderType,
@@ -25,6 +27,7 @@ import {
   ZeroExV2Order,
   ZeroExV2MultiOrder,
   OpenDirectlyOrder,
+  SaiDaiOrder,
 } from './types';
 
 export class OrderMapper {
@@ -36,6 +39,7 @@ export class OrderMapper {
   private oasisV3SimpleExchangeWrapper: OasisV3SimpleExchangeWrapper;
   private oasisV3MatchingExchangeWrapper: OasisV3MatchingExchangeWrapper;
   private openDirectlyExchangeWrapper: OpenDirectlyExchangeWrapper;
+  private saiDaiExchangeWrapper: SaiDaiExchangeWrapper;
 
   constructor(
     networkId: number,
@@ -48,6 +52,7 @@ export class OrderMapper {
     this.oasisV3SimpleExchangeWrapper = new OasisV3SimpleExchangeWrapper(networkId);
     this.oasisV3MatchingExchangeWrapper = new OasisV3MatchingExchangeWrapper(networkId);
     this.openDirectlyExchangeWrapper = new OpenDirectlyExchangeWrapper(networkId);
+    this.saiDaiExchangeWrapper = new SaiDaiExchangeWrapper(networkId);
   }
 
   public setNetworkId(
@@ -61,6 +66,7 @@ export class OrderMapper {
     this.oasisV3SimpleExchangeWrapper.setNetworkId(networkId);
     this.oasisV3MatchingExchangeWrapper.setNetworkId(networkId);
     this.openDirectlyExchangeWrapper.setNetworkId(networkId);
+    this.saiDaiExchangeWrapper.setNetworkId(networkId);
   }
 
   public mapOrder(order: Order): { bytes: number[], exchangeWrapperAddress: string } {
@@ -123,6 +129,13 @@ export class OrderMapper {
           bytes: this.openDirectlyExchangeWrapper.orderToBytes(orderData as OpenDirectlyOrder),
           exchangeWrapperAddress: order.exchangeWrapperAddress ||
             this.openDirectlyExchangeWrapper.getAddress(),
+        };
+
+      case OrderType.SaiDai:
+        return {
+          bytes: this.saiDaiExchangeWrapper.orderToBytes(orderData as SaiDaiOrder),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.saiDaiExchangeWrapper.getAddress(),
         };
 
       default:
