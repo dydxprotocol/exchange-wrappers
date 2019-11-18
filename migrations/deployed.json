@@ -95,6 +95,13 @@
             "transactionHash": "0x96983ab7120c1097c60e05c0213949d3010a72f1febf051a82e11d5bf200f766"
         }
     },
+    "SaiDaiExchangeWrapper": {
+        "1": {
+            "links": {},
+            "address": "0xb7752091b95cdf2b8788f0f1ed982ce7fc499a10",
+            "transactionHash": "0x5e5fe62e4603130c522d6a8523d2131fb6574e5f329bf1c7bc88a888fcf689d9"
+        }
+    },
     "SaiDaiExchangeWrapper": {},
     "TestExchangeWrapper": {}
 }
