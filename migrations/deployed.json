@@ -102,6 +102,5 @@
             "transactionHash": "0x5e5fe62e4603130c522d6a8523d2131fb6574e5f329bf1c7bc88a888fcf689d9"
         }
     },
-    "SaiDaiExchangeWrapper": {},
     "TestExchangeWrapper": {}
 }
