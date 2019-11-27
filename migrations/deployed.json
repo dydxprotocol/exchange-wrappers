@@ -98,8 +98,8 @@
     "SaiDaiExchangeWrapper": {
         "1": {
             "links": {},
-            "address": "0xb7752091b95cdf2b8788f0f1ed982ce7fc499a10",
-            "transactionHash": "0x5e5fe62e4603130c522d6a8523d2131fb6574e5f329bf1c7bc88a888fcf689d9"
+            "address": "0x6cbf85f6fb32173be17d29fa714a7015f781d939",
+            "transactionHash": "0x249a16d500caae375ba82e811fcc6a1b165d749741618aaf1c5b28bcab6691bd"
         }
     },
     "TestExchangeWrapper": {}
