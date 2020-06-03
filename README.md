@@ -10,8 +10,8 @@
   <a href='https://www.npmjs.com/package/@dydxprotocol/exchange-wrappers'>
     <img src='https://img.shields.io/npm/v/@dydxprotocol/exchange-wrappers.svg' alt='NPM' />
   </a>
-  <a href='https://slack.dydx.exchange/'>
-    <img src='https://img.shields.io/badge/chat-on%20slack-brightgreen.svg?longCache=true' alt='Slack' />
+  <a href='https://t.me/joinchat/GBnMlBb9mQblQck2pThTgw' style="text-decoration:none;">
+    <img src='https://img.shields.io/badge/chat-on%20telegram-9cf.svg?longCache=true' alt='Telegram' />
   </a>
 </p>
 

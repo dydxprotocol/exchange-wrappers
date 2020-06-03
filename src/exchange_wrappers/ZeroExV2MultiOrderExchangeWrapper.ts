@@ -1,5 +1,4 @@
 import web3Utils from 'web3-utils';
-import BN from 'bn.js';
 import BigNumber from 'bignumber.js';
 import { ZeroExV2MultiOrder } from '../types';
 import { ZeroExV2MultiOrderExchangeWrapper as Contract } from '../../migrations/deployed.json';
@@ -53,7 +52,7 @@ export class ZeroExV2MultiOrderExchangeWrapper {
     return result;
   }
 
-  private toBytes(val: string | BN | BigNumber) {
+  private toBytes(val: string | BigNumber) {
     return web3Utils.hexToBytes(
       web3Utils.padLeft(web3Utils.toHex(val), 64, '0'),
     );

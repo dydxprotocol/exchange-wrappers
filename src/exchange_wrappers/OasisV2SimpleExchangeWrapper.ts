@@ -1,5 +1,5 @@
 import web3Utils from 'web3-utils';
-import BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 import {
   OasisV2Order,
 } from '../types';
@@ -28,7 +28,7 @@ export class OasisV2SimpleExchangeWrapper {
     return this.toBytes(order.id);
   }
 
-  private toBytes(val: string | BN) {
+  private toBytes(val: string | BigNumber) {
     return web3Utils.hexToBytes(
       web3Utils.padLeft(web3Utils.toHex(val), 64, '0'),
     );

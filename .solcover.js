@@ -1,6 +1,10 @@
 module.exports = {
-  testCommand: 'node --max-old-space-size=4096 ../node_modules/.bin/truffle test --network coverage',
-  compileCommand: 'node --max-old-space-size=4096 ../node_modules/.bin/truffle compile --network coverage',
-  copyPackages: ['openzeppelin-solidity'],
-  skipFiles: ['external/', 'testing/']
+  client: require('ganache-cli'),
+  providerOptions: {
+    network_id: 1002,
+  },
+  skipFiles: [
+    'Migrations.sol',
+    'test/',
+  ],
 };

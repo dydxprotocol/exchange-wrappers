@@ -16,7 +16,6 @@
 
 */
 
-import BN from 'bn.js';
 import BigNumber from 'bignumber.js';
 
 export enum OrderType {
@@ -40,27 +39,27 @@ export interface TestOrder extends Order {
   originator: string;
   makerToken: string;
   takerToken: string;
-  makerAmount: BigNumber | BN;
-  takerAmount: BigNumber | BN;
-  allegedTakerAmount: BigNumber | BN;
-  desiredMakerAmount: BigNumber | BN;
+  makerAmount: BigNumber | BigNumber;
+  takerAmount: BigNumber | BigNumber;
+  allegedTakerAmount: BigNumber | BigNumber;
+  desiredMakerAmount: BigNumber | BigNumber;
 }
 
 interface ZeroExV2OrderBase {
   exchangeAddress: string;
-  expirationTimeSeconds: BigNumber | BN;
+  expirationTimeSeconds: BigNumber | BigNumber;
   feeRecipientAddress: string;
   makerAddress: string;
-  makerAssetAmount: BigNumber | BN;
+  makerAssetAmount: BigNumber | BigNumber;
   makerAssetData: string;
-  makerFee: BigNumber | BN;
-  salt: BigNumber | BN;
+  makerFee: BigNumber | BigNumber;
+  salt: BigNumber | BigNumber;
   senderAddress: string;
   signature: string;
   takerAddress: string;
-  takerAssetAmount: BigNumber | BN;
+  takerAssetAmount: BigNumber | BigNumber;
   takerAssetData: string;
-  takerFee: BigNumber | BN;
+  takerFee: BigNumber | BigNumber;
 }
 
 export interface ZeroExV2Order extends Order, ZeroExV2OrderBase {
@@ -72,15 +71,15 @@ export interface ZeroExV2MultiOrder extends Order {
 }
 
 export interface OasisV1Order extends Order {
-  id: string | BN;
+  id: string | BigNumber;
 }
 
 export interface OasisV2Order extends Order {
-  id: string | BN;
+  id: string | BigNumber;
 }
 
 export interface OasisV3Order extends Order {
-  id: string | BN;
+  id: string | BigNumber;
 }
 
 export interface OasisV3MarketOrder extends Order {

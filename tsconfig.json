@@ -6,17 +6,25 @@
     "strict": false,
     "sourceMap": true,
     "declaration": true,
+    "downlevelIteration": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": ["node"]
+    "types": ["node", "mocha", "chai"]
   },
   "include": [
-    "src"
+    "src",
+    "test"
+  ],
+  "exclude": [
+    "scripts/**/*",
+    "build/**/*",
+    "migrations/**/*"
   ],
   "compileOnSave": true
 }
