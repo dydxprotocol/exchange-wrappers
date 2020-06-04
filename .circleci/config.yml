@@ -84,15 +84,19 @@ workflows:
     jobs:
       - checkout_and_install
       - compile_contracts:
+          context: Node Service Context
           requires:
             - checkout_and_install
       - lint:
+          context: Node Service Context
           requires:
             - checkout_and_install
       - build_js:
+          context: Node Service Context
           requires:
             - checkout_and_install
       - publish:
+          context: Node Service Context
           requires:
             - lint
             - build_js
