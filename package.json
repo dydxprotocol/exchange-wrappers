@@ -51,7 +51,7 @@
   "dependencies": {
     "bignumber.js": "^8.1.1",
     "es6-promisify": "^6.0.2",
-    "openzeppelin-solidity": "2.2.0",
+    "@openzeppelin/contracts": "2.5.0",
     "web3-utils": "1.2.1"
   },
   "devDependencies": {

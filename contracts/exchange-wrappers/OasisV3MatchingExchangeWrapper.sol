@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2020 dYdX Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 pragma solidity 0.5.16;
 pragma experimental ABIEncoderV2;
 
-import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { IMatchingMarketV1 } from "../external/Maker/OasisV1/IMatchingMarketV1.sol";
 import { ExchangeReader } from "../interfaces/ExchangeReader.sol";
 import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
