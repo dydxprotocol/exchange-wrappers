@@ -1,6 +1,6 @@
-import web3Utils from 'web3-utils';
 import BigNumber from 'bignumber.js';
 import { ZeroExV2MultiOrder } from '../types';
+import { allToBytes } from '../helpers/BytesHelper';
 import { ZeroExV2MultiOrderExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
 export class ZeroExV2MultiOrderExchangeWrapper {
@@ -22,39 +22,30 @@ export class ZeroExV2MultiOrderExchangeWrapper {
     this.networkId = networkId;
   }
 
-  public orderToBytes(multiOrder: ZeroExV2MultiOrder): number[] {
-    let result = [];
+  public orderToBytes(multiOrder: ZeroExV2MultiOrder): string {
+    const values: any[] = [];
     if (!multiOrder.maxPrice || new BigNumber(multiOrder.maxPrice).isZero()) {
       const zero = new BigNumber(0);
-      result = result
-        .concat(this.toBytes(zero))
-        .concat(this.toBytes(zero));
+      values.push(zero);
+      values.push(zero);
     } else {
       const base = new BigNumber('1e18');
       const numerator = base.times(multiOrder.maxPrice).integerValue(BigNumber.ROUND_CEIL);
-      result = result
-        .concat(this.toBytes(numerator))
-        .concat(this.toBytes(base));
+      values.push(numerator);
+      values.push(base);
     }
     for (let i = 0; i < multiOrder.orders.length; i += 1) {
       const order = multiOrder.orders[i];
-      result = result
-        .concat(this.toBytes(order.makerAddress))
-        .concat(this.toBytes(order.takerAddress))
-        .concat(this.toBytes(order.feeRecipientAddress))
-        .concat(this.toBytes(order.senderAddress))
-        .concat(this.toBytes(order.makerAssetAmount))
-        .concat(this.toBytes(order.takerAssetAmount))
-        .concat(this.toBytes(order.expirationTimeSeconds))
-        .concat(this.toBytes(order.salt))
-        .concat(this.toBytes(order.signature));
+      values.push(order.makerAddress);
+      values.push(order.takerAddress);
+      values.push(order.feeRecipientAddress);
+      values.push(order.senderAddress);
+      values.push(order.makerAssetAmount);
+      values.push(order.takerAssetAmount);
+      values.push(order.expirationTimeSeconds);
+      values.push(order.salt);
+      values.push(order.signature);
     }
-    return result;
-  }
-
-  private toBytes(val: string | BigNumber) {
-    return web3Utils.hexToBytes(
-      web3Utils.padLeft(web3Utils.toHex(val), 64, '0'),
-    );
+    return allToBytes(...values);
   }
 }

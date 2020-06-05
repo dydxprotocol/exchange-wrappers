@@ -1,6 +1,4 @@
-import {
-  SaiDaiOrder,
-} from '../types';
+import { SaiDaiOrder } from '../types';
 import { SaiDaiExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
 export class SaiDaiExchangeWrapper {
@@ -22,10 +20,10 @@ export class SaiDaiExchangeWrapper {
     return Contract[this.networkId.toString()].address;
   }
 
-  public orderToBytes(order: SaiDaiOrder): number[] {
+  public orderToBytes(order: SaiDaiOrder): string {
     if (!order) {
       throw new Error('no SaiDaiOrder');
     }
-    return [];
+    return '0x';
   }
 }
