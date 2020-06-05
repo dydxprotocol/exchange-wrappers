@@ -31,6 +31,7 @@ export enum OrderType {
   OasisV3Market = 'OASIS_V3_MARKET',
   OpenDirectly = 'OPEN_DIRECTLY',
   SaiDai = 'SAI_DAI',
+  Curve = 'CURVE',
 }
 
 export interface Order {
@@ -92,3 +93,14 @@ export interface OasisV3MarketOrder extends Order {
 export interface OpenDirectlyOrder extends Order {}
 
 export interface SaiDaiOrder extends Order {}
+
+export interface CurveOrder extends Order {
+  minToAmount: BigNumberable;
+  trades: {
+    curveAddress: address,
+    fromId: BigNumberable,
+    toId: BigNumberable,
+    fromAmount: BigNumberable,
+    exchangeUnderlying: boolean,
+  }[];
+}

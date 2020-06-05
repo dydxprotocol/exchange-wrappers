@@ -2,6 +2,7 @@
  * To publish a contract with the published npm package, include it here
  */
 
+import { default as CurveExchangeWrapper } from '../build/contracts/CurveExchangeWrapper.json';
 import { default as OasisV1SimpleExchangeWrapper } from '../build/contracts/OasisV1SimpleExchangeWrapper.json';
 import { default as OasisV2SimpleExchangeWrapper } from '../build/contracts/OasisV2SimpleExchangeWrapper.json';
 import { default as OasisV3SimpleExchangeWrapper } from '../build/contracts/OasisV3SimpleExchangeWrapper.json';
@@ -14,6 +15,7 @@ import { default as ZeroExV2ExchangeWrapper } from '../build/contracts/ZeroExV2E
 import { default as ZeroExV2MultiOrderExchangeWrapper } from '../build/contracts/ZeroExV2MultiOrderExchangeWrapper.json';
 
 export default {
+  CurveExchangeWrapper,
   OasisV1SimpleExchangeWrapper,
   OasisV2SimpleExchangeWrapper,
   OasisV3SimpleExchangeWrapper,

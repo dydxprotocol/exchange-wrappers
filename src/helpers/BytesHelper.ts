@@ -6,9 +6,16 @@ export function argToBytes(val: BigNumberable): string {
 }
 
 export function allToBytes(...values: BigNumberable[]): string {
-  let result: string = '0x';
-  for (const value in values) {
-    result += argToBytes(value);
+  return combineHexStrings(...values.map(v => argToBytes(v)));
+}
+
+export function combineHexStrings(...args: string[]): string {
+  return `0x${args.map(stripHexPrefix).join('')}`;
+}
+
+export function stripHexPrefix(input: string) {
+  if (input.startsWith('0x')) {
+    return input.slice(2);
   }
-  return result;
+  return input;
 }

@@ -5,18 +5,30 @@ const HDWalletProvider = require('@truffle/hdwallet-provider'); // eslint-disabl
 module.exports = {
   networks: {
     mainnet: {
-      host: '127.0.0.1',
-      port: 8545,
       network_id: '1',
-      gasPrice: process.env.GAS_PRICE,
-      gas: 7900000
+      provider: () => new HDWalletProvider(
+        [process.env.DEPLOYER_PRIVATE_KEY],
+        process.env.ETHEREUM_WS_NODE_MAINNET,
+        0,
+        1,
+      ),
+      gasPrice: Number(process.env.GAS_PRICE),
+      gas: 2100000,
+      from: process.env.DEPLOYER_ACCOUNT,
+      timeoutBlocks: 500,
     },
     kovan: {
-      host: '127.0.0.1',
-      port: 8545,
       network_id: '42',
-      gasPrice: 1000000000, // 1 gwei
-      gas: 7900000
+      provider: () => new HDWalletProvider(
+        [process.env.DEPLOYER_PRIVATE_KEY],
+        process.env.ETHEREUM_WS_NODE_KOVAN,
+        0,
+        1,
+      ),
+      gasPrice: 1100000000, // 1.1 gwei
+      gas: 6900000,
+      from: process.env.DEPLOYER_ACCOUNT,
+      timeoutBlocks: 500,
     },
     test: {
       host: '0.0.0.0',
@@ -44,7 +56,7 @@ module.exports = {
       settings: {
         optimizer: {
           enabled: true,
-          runs: 10000
+          runs: 10000,
         },
       },
     },

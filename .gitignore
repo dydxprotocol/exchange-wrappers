@@ -1,4 +1,6 @@
 .idea
+.env.local
+
 build/
 dist/
 node_modules/
