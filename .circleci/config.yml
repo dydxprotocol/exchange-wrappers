@@ -46,6 +46,37 @@ jobs:
           key: cache-completed-compile-contracts-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/build
+  coverage:
+    docker:
+      - image: dydxprotocol/node:10.16.3-alpine
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-completed-compile-contracts-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Coverage
+          command: python util/fix_contracts_for_coverage.py && npm run coverage
+          no_output_timeout: 60m
+      - run:
+          name: Coveralls
+          command: cat coverage/lcov.info | node_modules/.bin/coveralls
+  test:
+    docker:
+      - image: dydxprotocol/node:10.16.3-alpine
+      - image: trufflesuite/ganache-cli:v6.8.2
+        command: -d -k=istanbul -i 1001
+    working_directory: ~/build
+    parallelism: 2
+    steps:
+      - restore_cache:
+          key: cache-completed-compile-contracts-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install Docker
+          command: apk add docker
+      - run:
+          name: Test
+          command: TESTFILES=$(circleci tests glob "test/**/*.test.ts" | circleci tests split --split-by=filesize) && npm run test -- ${TESTFILES}
+          no_output_timeout: 20m
   build_js:
     docker:
       - image: dydxprotocol/node:10.16.3-alpine
@@ -83,10 +114,6 @@ workflows:
   build_and_test:
     jobs:
       - checkout_and_install
-      - compile_contracts:
-          context: Node Service Context
-          requires:
-            - checkout_and_install
       - lint:
           context: Node Service Context
           requires:
@@ -95,10 +122,23 @@ workflows:
           context: Node Service Context
           requires:
             - checkout_and_install
-      - publish:
+      - compile_contracts:
           context: Node Service Context
           requires:
+            - checkout_and_install
+      - test:
+          context: Node Service Context
+          requires:
+            - compile_contracts
+      - coverage:
+          context: Node Service Context
+          requires:
+            - compile_contracts
+      - publish:
+          requires:
             - lint
+            - test
+            - coverage
             - build_js
           filters:
             branches:
