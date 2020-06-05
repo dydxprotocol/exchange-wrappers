@@ -1,28 +1,27 @@
 {
   "name": "@dydxprotocol/exchange-wrappers",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "description": "Collection of exchange wrapper contracts used by the dYdX Protocol",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
-    "dist/",
-    "src/",
-    "contracts/",
-    "build/"
+    "dist/build/",
+    "dist/src",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
-    "test": "echo 'No Tests'",
-    "build": "npm run compile && npm run build:wrappers",
+    "test": "npm run deploy_test && npm run test_only",
+    "test_only": "truffle test",
     "compile": "truffle compile",
-    "build:wrappers": "typechain --target=web3-1.0.0 --outDir=build/wrappers/ './build/contracts/*.json'",
+    "clean_contract_json": "ts-node ./scripts/CleanBuild.ts",
+    "build": "npm run compile -- --all && npm run clean_contract_json && npm run build:js",
+    "build:js": "rm -rf dist/ && tsc",
     "migrate": "truffle migrate",
-    "develop": "truffle develop",
-    "console": "truffle console",
     "lint": "npm run lint:ts && npm run lint:dydx",
     "lint:ts": "tslint --project . -t verbose 'src/**/*.ts'",
     "lint:sol": "solium -d contracts/",
-    "lint:dydx": "python util/lintcontracts.py",
-    "build:js": "rm -rf dist/ && tsc"
+    "lint:dydx": "python util/lintcontracts.py"
   },
   "repository": {
     "type": "git",
@@ -41,20 +40,35 @@
     "url": "https://github.com/dydxprotocol/exchange-wrappers/issues"
   },
   "homepage": "https://github.com/dydxprotocol/exchange-wrappers#readme",
-  "devDependencies": {
-    "solium": "^1.2.3",
-    "truffle": "^5.0.17",
-    "tslint": "^5.12.1",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-no-focused-test": "^0.5.0",
-    "typechain": "^0.3.11",
-    "typescript": "^3.3.3"
-  },
   "dependencies": {
-    "@types/bn.js": "^4.11.4",
-    "bignumber.js": "^8.0.2",
-    "bn.js": "^4.11.8",
+    "bignumber.js": "^8.1.1",
+    "es6-promisify": "^6.0.2",
     "openzeppelin-solidity": "2.2.0",
     "web3-utils": "1.2.1"
+  },
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.0.33",
+    "@types/chai": "^4.2.7",
+    "@types/es6-promisify": "^6.0.0",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^14.0.10",
+    "chai": "^4.2.0",
+    "chai-bignumber": "^3.0.0",
+    "coveralls": "^3.0.9",
+    "dotenv-flow": "^3.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "ethlint": "^1.2.5",
+    "ganache-cli": "6.8.2",
+    "mocha": "^7.0.0",
+    "solidity-coverage": "^0.7.1",
+    "solium": "^1.2.5",
+    "truffle": "^5.1.19",
+    "ts-node": "^8.6.2",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
+    "tslint-no-focused-test": "^0.5.0",
+    "typescript": "^3.7.4"
   }
 }

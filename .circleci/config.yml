@@ -2,7 +2,7 @@ version: 2
 jobs:
   checkout_and_install:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - checkout
@@ -24,7 +24,7 @@ jobs:
             - ~/build
   lint:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:
@@ -32,30 +32,44 @@ jobs:
       - run:
           name: Lint
           command: npm run lint
-  build:
+  compile_contracts:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:
           key: cache-{{ .Environment.CIRCLE_SHA1 }}
       - run:
-          name: Build Contracts
+          name: Compile contracts
+          command: npm run compile -- --all
+      - save_cache:
+          key: cache-completed-compile-contracts-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/build
+  build_js:
+    docker:
+      - image: dydxprotocol/node:10.16.3-alpine
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Build
           command: npm run build
       - run:
-          name: Build Typescript
-          command: npm run build:js
+          name: Copy over contracts
+          command: rm -rf dist/build/contracts && mkdir -p dist/build/contracts && cp build/published_contracts/*.json dist/build/contracts
       - save_cache:
-          key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
+          key: cache-completed-build-js-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/build
   publish:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:
-          key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
+          key: cache-completed-build-js-{{ .Environment.CIRCLE_SHA1 }}
       - add_ssh_keys:
           fingerprints:
             - "88:7a:1c:85:c6:32:71:6f:0c:74:40:f7:7b:60:31:52"
@@ -69,16 +83,23 @@ workflows:
   build_and_test:
     jobs:
       - checkout_and_install
-      - lint:
+      - compile_contracts:
+          context: Node Service Context
           requires:
             - checkout_and_install
-      - build:
+      - lint:
+          context: Node Service Context
+          requires:
+            - checkout_and_install
+      - build_js:
+          context: Node Service Context
           requires:
             - checkout_and_install
       - publish:
+          context: Node Service Context
           requires:
-            - build
             - lint
+            - build_js
           filters:
             branches:
               only: master

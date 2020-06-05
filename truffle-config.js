@@ -1,36 +1,26 @@
-let mocha = {
-  useColors: true
-};
-
-if (process.env.TRUFFLE_REPORTER) {
-  mocha = {
-    reporter: 'mocha-junit-reporter',
-    reporterOptions: {
-      mochaFile: './junit/test-results.xml'
-    }
-  };
-}
+require('dotenv-flow').config(); // eslint-disable-line
+const HDWalletProvider = require('@truffle/hdwallet-provider'); // eslint-disable-line
 
 module.exports = {
   networks: {
     mainnet: {
-      host: "127.0.0.1",
+      host: '127.0.0.1',
       port: 8545,
-      network_id: "1",
+      network_id: '1',
       gasPrice: process.env.GAS_PRICE,
       gas: 7900000
     },
     kovan: {
-      host: "127.0.0.1",
+      host: '127.0.0.1',
       port: 8545,
-      network_id: "42",
+      network_id: '42',
       gasPrice: 1000000000, // 1 gwei
       gas: 7900000
     },
     dev: {
-      host: "localhost",
+      host: 'localhost',
       port: 8545,
-      network_id: "*",
+      network_id: '*',
       gasPrice: 1000000000, // 1 gwei
       gas: 7900000
     },
@@ -47,17 +37,20 @@ module.exports = {
       port: 8545
     }
   },
-  mocha,
   compilers: {
     solc: {
-      version: '0.5.9',
+      version: '0.5.16',
+      parser: 'solcjs',
       settings: {
         optimizer: {
           enabled: true,
           runs: 10000
         },
-        evmVersion: 'byzantium',
       },
     },
+  },
+  plugins: ['solidity-coverage'],
+  mocha: {
+    timeout: false,
   },
 };
