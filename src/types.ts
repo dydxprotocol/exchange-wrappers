@@ -42,27 +42,27 @@ export interface TestOrder extends Order {
   originator: string;
   makerToken: string;
   takerToken: string;
-  makerAmount: BigNumber | BigNumber;
-  takerAmount: BigNumber | BigNumber;
-  allegedTakerAmount: BigNumber | BigNumber;
-  desiredMakerAmount: BigNumber | BigNumber;
+  makerAmount: BigNumber;
+  takerAmount: BigNumber;
+  allegedTakerAmount: BigNumber;
+  desiredMakerAmount: BigNumber;
 }
 
 interface ZeroExV2OrderBase {
   exchangeAddress: string;
-  expirationTimeSeconds: BigNumber | BigNumber;
+  expirationTimeSeconds: BigNumber;
   feeRecipientAddress: string;
   makerAddress: string;
-  makerAssetAmount: BigNumber | BigNumber;
+  makerAssetAmount: BigNumber;
   makerAssetData: string;
-  makerFee: BigNumber | BigNumber;
-  salt: BigNumber | BigNumber;
+  makerFee: BigNumber;
+  salt: BigNumber;
   senderAddress: string;
   signature: string;
   takerAddress: string;
-  takerAssetAmount: BigNumber | BigNumber;
+  takerAssetAmount: BigNumber;
   takerAssetData: string;
-  takerFee: BigNumber | BigNumber;
+  takerFee: BigNumber;
 }
 
 export interface ZeroExV2Order extends Order, ZeroExV2OrderBase {

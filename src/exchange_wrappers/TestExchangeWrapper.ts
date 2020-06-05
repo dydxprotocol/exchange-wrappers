@@ -1,6 +1,5 @@
-import web3Utils from 'web3-utils';
-import BigNumber from 'bignumber.js';
 import { TestOrder } from '../types';
+import { allToBytes } from '../helpers/BytesHelper';
 import { TestExchangeWrapper as Contract } from '../../migrations/deployed.json';
 
 export class TestExchangeWrapper {
@@ -22,20 +21,15 @@ export class TestExchangeWrapper {
     this.networkId = networkId;
   }
 
-  public orderToBytes(order: TestOrder): number[] {
-    return []
-      .concat(this.toBytes(order.originator))
-      .concat(this.toBytes(order.makerToken))
-      .concat(this.toBytes(order.takerToken))
-      .concat(this.toBytes(order.makerAmount))
-      .concat(this.toBytes(order.takerAmount))
-      .concat(this.toBytes(order.allegedTakerAmount))
-      .concat(this.toBytes(order.desiredMakerAmount));
-  }
-
-  private toBytes(val: string | BigNumber) {
-    return web3Utils.hexToBytes(
-      web3Utils.padLeft(web3Utils.toHex(val), 64, '0'),
+  public orderToBytes(order: TestOrder): string {
+    return allToBytes(
+      order.originator,
+      order.makerToken,
+      order.takerToken,
+      order.makerAmount,
+      order.takerAmount,
+      order.allegedTakerAmount,
+      order.desiredMakerAmount,
     );
   }
 }

@@ -20,7 +20,10 @@ export class OpenDirectlyExchangeWrapper {
     return Contract[this.networkId.toString()].address;
   }
 
-  public orderToBytes(order: OpenDirectlyOrder): number[] {
-    return [];
+  public orderToBytes(order: OpenDirectlyOrder): string {
+    if (!order) {
+      throw new Error('no OpenDirectlyOrder');
+    }
+    return '0x';
   }
 }

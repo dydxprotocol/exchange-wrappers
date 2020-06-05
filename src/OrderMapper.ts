@@ -69,7 +69,7 @@ export class OrderMapper {
     this.saiDaiExchangeWrapper.setNetworkId(networkId);
   }
 
-  public mapOrder(order: Order): { bytes: number[], exchangeWrapperAddress: string } {
+  public mapOrder(order: Order): { bytes: string, exchangeWrapperAddress: string } {
     const { type, ...orderData } = order;
 
     switch (type) {
