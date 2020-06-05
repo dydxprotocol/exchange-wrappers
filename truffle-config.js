@@ -1,3 +1,4 @@
+require('ts-node/register'); // eslint-disable-line
 require('dotenv-flow').config(); // eslint-disable-line
 const HDWalletProvider = require('@truffle/hdwallet-provider'); // eslint-disable-line
 
@@ -17,25 +18,24 @@ module.exports = {
       gasPrice: 1000000000, // 1 gwei
       gas: 7900000
     },
-    dev: {
-      host: 'localhost',
+    test: {
+      host: '0.0.0.0',
       port: 8545,
-      network_id: '*',
-      gasPrice: 1000000000, // 1 gwei
-      gas: 7900000
+      gasPrice: 1,
+      network_id: '1001',
     },
     coverage: {
-      host: 'localhost',
-      network_id: '*',
+      host: '127.0.0.1',
       port: 8555,
-      gas: 0xfffffffffff,
-      gasPrice: 0x01,
+      gasPrice: 1,
+      network_id: '1002',
     },
     docker: {
       host: 'localhost',
-      network_id: '1212',
-      port: 8545
-    }
+      network_id: '1313',
+      port: 8545,
+      gasPrice: 1,
+    },
   },
   compilers: {
     solc: {

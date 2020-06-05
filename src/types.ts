@@ -18,6 +18,9 @@
 
 import BigNumber from 'bignumber.js';
 
+export type address = string;
+export type BigNumberable = BigNumber | number | string;
+
 export enum OrderType {
   Test = 'TEST',
   ZeroExV2 = 'ZERO_EX_V2',
