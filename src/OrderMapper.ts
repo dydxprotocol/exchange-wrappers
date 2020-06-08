@@ -16,6 +16,8 @@ import { OpenDirectlyExchangeWrapper } from
   './exchange_wrappers/OpenDirectlyExchangeWrapper';
 import { SaiDaiExchangeWrapper } from
   './exchange_wrappers/SaiDaiExchangeWrapper';
+import { CurveExchangeWrapper } from
+  './exchange_wrappers/CurveExchangeWrapper';
 import {
   Order,
   OrderType,
@@ -28,6 +30,7 @@ import {
   ZeroExV2MultiOrder,
   OpenDirectlyOrder,
   SaiDaiOrder,
+  CurveOrder,
 } from './types';
 
 export class OrderMapper {
@@ -40,6 +43,7 @@ export class OrderMapper {
   private oasisV3MatchingExchangeWrapper: OasisV3MatchingExchangeWrapper;
   private openDirectlyExchangeWrapper: OpenDirectlyExchangeWrapper;
   private saiDaiExchangeWrapper: SaiDaiExchangeWrapper;
+  private curveExchangeWrapper: CurveExchangeWrapper;
 
   constructor(
     networkId: number,
@@ -53,6 +57,7 @@ export class OrderMapper {
     this.oasisV3MatchingExchangeWrapper = new OasisV3MatchingExchangeWrapper(networkId);
     this.openDirectlyExchangeWrapper = new OpenDirectlyExchangeWrapper(networkId);
     this.saiDaiExchangeWrapper = new SaiDaiExchangeWrapper(networkId);
+    this.curveExchangeWrapper = new CurveExchangeWrapper(networkId);
   }
 
   public setNetworkId(
@@ -67,6 +72,7 @@ export class OrderMapper {
     this.oasisV3MatchingExchangeWrapper.setNetworkId(networkId);
     this.openDirectlyExchangeWrapper.setNetworkId(networkId);
     this.saiDaiExchangeWrapper.setNetworkId(networkId);
+    this.curveExchangeWrapper.setNetworkId(networkId);
   }
 
   public mapOrder(order: Order): { bytes: string, exchangeWrapperAddress: string } {
@@ -136,6 +142,13 @@ export class OrderMapper {
           bytes: this.saiDaiExchangeWrapper.orderToBytes(orderData as SaiDaiOrder),
           exchangeWrapperAddress: order.exchangeWrapperAddress ||
             this.saiDaiExchangeWrapper.getAddress(),
+        };
+
+      case OrderType.Curve:
+        return {
+          bytes: this.curveExchangeWrapper.orderToBytes(orderData as CurveOrder),
+          exchangeWrapperAddress: order.exchangeWrapperAddress ||
+            this.curveExchangeWrapper.getAddress(),
         };
 
       default:

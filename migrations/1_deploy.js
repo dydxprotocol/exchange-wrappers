@@ -18,6 +18,7 @@
 
 // ============ Contracts ============
 
+const CurveExchangeWrapper = artifacts.require('CurveExchangeWrapper');
 const OasisV1SimpleExchangeWrapper = artifacts.require('OasisV1SimpleExchangeWrapper');
 const OasisV2SimpleExchangeWrapper = artifacts.require('OasisV2SimpleExchangeWrapper');
 const OasisV3SimpleExchangeWrapper = artifacts.require('OasisV3SimpleExchangeWrapper');
@@ -32,7 +33,10 @@ const TestExchangeWrapper = artifacts.require('TestExchangeWrapper');
 // ============ Main Migration ============
 
 const migration = async (deployer, network, accounts) => {
-  await deployer.deploy(TestExchangeWrapper);
+  await Promise.all([
+    deployer.deploy(CurveExchangeWrapper),
+    deployer.deploy(TestExchangeWrapper),
+  ]);
 };
 
 module.exports = migration;

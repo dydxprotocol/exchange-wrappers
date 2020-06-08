@@ -102,5 +102,12 @@
             "transactionHash": "0x249a16d500caae375ba82e811fcc6a1b165d749741618aaf1c5b28bcab6691bd"
         }
     },
+    "CurveExchangeWrapper": {
+        "1": {
+            "links": {},
+            "address": "0xc8f1dC5F659238389AFCF14372f72a84E60E664b",
+            "transactionHash": "0x0ef8df146c5000b4005355f93753e12c3d29b0309a13d88f338d34854faa52a0"
+        }
+    },
     "TestExchangeWrapper": {}
 }
