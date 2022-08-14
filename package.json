@@ -50,7 +50,7 @@
   },
   "homepage": "https://github.com/dydxprotocol/exchange-wrappers#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "2.5.0",
+    "@openzeppelin/contracts": "4.7.2",
     "bignumber.js": "^8.1.1",
     "es6-promisify": "^6.0.2",
     "ethers": "^4.0.47",
